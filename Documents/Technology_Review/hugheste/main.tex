@@ -1,0 +1,173 @@
+\documentclass[onecolumn, draftclsnofoot,10pt, compsoc]{IEEEtran}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{setspace}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage[english]{babel}
+
+\usepackage{geometry}
+\geometry{textheight=9.5in, textwidth=7in}
+
+\usepackage{pgfgantt}
+% 1. Fill in these details
+\def \CapstoneTeamName{		Pavement Prometheus}
+\def \CapstoneTeamNumber{		9}
+\def \GroupMemberOne{		Stephanie Allison Hughes }
+\def \CapstoneProjectName{		Pedestrian Counting and Privacy Preservation}
+\def \CapstoneSponsorCompany{	Oregon State University}
+\def \CapstoneSponsorPerson{		Dr. Fuxin Li}
+
+% 2. Uncomment the appropriate line below so that the document type works
+\def \DocType{		%Problem Statement
+				Technology Review and Implementation Plan
+				%Technology Review
+				%Design Document
+				%Progress Report
+				}
+			
+\newcommand{\NameSigPair}[1]{\par
+\makebox[2.75in][r]{#1} \hfil 	\makebox[3.25in]{\makebox[2.25in]{\hrulefill} \hfill		\makebox[.75in]{\hrulefill}}
+\par\vspace{-12pt} \textit{\tiny\noindent
+\makebox[2.75in]{} \hfil		\makebox[3.25in]{\makebox[2.25in][r]{Signature} \hfill	\makebox[.75in][r]{Date}}}}
+% 3. If the document is not to be signed, uncomment the RENEWcommand below
+\renewcommand{\NameSigPair}[1]{#1}
+\usepackage{etoolbox}
+\patchcmd{\thebibliography}{\section*{\refname}}{}{}{}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\begin{titlepage}
+    \pagenumbering{gobble}
+    \begin{singlespace}
+    	\includegraphics[height=4cm]{coe_v_spot1}
+        \hfill 
+        % 4. If you have a logo, use this includegraphics command to put it on the coversheet.
+        %\includegraphics[height=4cm]{CompanyLogo}   
+        \par\vspace{.2in}
+        \centering
+        \scshape{
+            \huge CS Capstone \DocType \par
+            {\large\today}\par
+            \vspace{.5in}
+            \textbf{\Huge\CapstoneProjectName}\par
+            % \vfill
+            {\large Prepared for}\par
+            \Huge \CapstoneSponsorCompany\par
+            \vspace{5pt}
+            {\Large\NameSigPair{\CapstoneSponsorPerson}\par}
+            {\large Prepared by }\par
+            Group\CapstoneTeamNumber\par
+            % 5. comment out the line below this one if you do not wish to name your team
+            \CapstoneTeamName\par 
+            \vspace{5pt}
+            {\Large
+                \NameSigPair{\GroupMemberOne}\par
+            }
+            \vspace{20pt}
+        }
+        \begin{abstract}
+        % 6. Fill in your abstract 
+        The City of Portland is updating their data gathering system to better integrate data and technology into the decisions made by the city. They are hoping to detect pedestrian movement so future traffic paths can be created to increase safety. The task of my group is to provide data on, and hopefully a solution to, this issue. Mainly our concern is manipulation of data, so the collected data can be stored and analyzed without violating privacy portions of the city's social contract. My role in this project is to obtain facial detection data of pedestrians from street footage to be used to train a convolutional neural network. 
+        \end{abstract}     
+    \end{singlespace}
+\end{titlepage}
+\newpage
+\pagenumbering{arabic}
+\tableofcontents
+% 7. uncomment this (if applicable). Consider adding a page break.
+%\listoffigures
+%\listoftables
+\clearpage
+
+% 8. now you write!
+\section{Introduction}
+The software described in this document using facial detection is a project under the advisement of Chanho Kim (Georgia Tech) and Dr. Fuxin Li (Oregon State University). The client for this project is the City of Portland, which wants a proof of concept for a way to transform the data from their traffic cameras so the city may store the data without storing identifying information about the citizens in the footage. My role in this project is to detect pedestrians through a computer vision program. Since I am in a larger group and my area of focus is more concise, I will be evaluating my role through different methods of facial detection and associated technology that runs under that methodology. This document will examine three possible methods of facial detection to gain data to train a convolutional neural network that can detect other pedestrians.
+
+\subsection{Individual Project Role}
+My individual project role will be to develop a computer vision program that can detect a pedestrian's face from video footage. I will be using video footage from a software simulation of a street seen with pedestrians to use as an initial data source. The data from the images will be used to train a convolutional neural network (CNN) along with my group members. I will be responsible for isolating the footage, getting the data points, and providing the detection data to help train the CNN. 
+
+\subsection{Accomplishment Goals}
+The goal for the full project is to have a system that results in information on pedestrian movements that can be stored for open access by the public. The goal for my area of the project is to provide a program that can detect pedestrian faces through data from simulated video footage. A future stretch goal is the ability to provide data analysis on traffic patterns as well. 
+
+\subsection{Method Criteria}
+The full pedestrian detection project is focused around detecting all people within video footage while also using low computing power. With this, the methods of facial detection will be judged primarily on their accuracy and simplicity of implementation. Bonus criteria that will be helpful to the development of the project will be speed and resources. The accuracy of a facial detection method will be centered around how well faces can be detected considering the strength of the detection evaluations and susceptibility to weakness in results. The simplicity of implementation will be evaluated on the method's ability to accomplish proper face detection with not too many different moving parts that could increase complexity and computing power. In the end, the best method will prioritize accuracy and simplicity, clearly fitting the needs for the project.
+
+\section{Knowledge-based}
+
+\iffalse
+
+
+\fi
+\subsection{Description}
+Knowledge-based methods of facial detection are based off pointing out the relationship between different facial features \cite{Medium}. A face is detected based on common features such as the eyes, nose, and mouth and their positions between each other. For example, if you have an image of a face, you would first identify the gradient intensity of the pixels on the face and the edges of the facial structure. From there the algorithm identifies certain features (eyes, nose, mouth, edges of face etc.) from the pixel intensity values and stores the measurements between both eyes, the eyes and nose, the nose and mouth, etc. \cite{Medium} Following this those measurements are compared with the measurements of different pictures of the same person. Once that person has been detected in different settings, then those assessments are tested to detect a face in a different person's image. Each time a new image is used, the calculation of the relationship between different facial features is refined to then be able to detect new unknown faces. The variables measured, facial featured used, and rules for refining data are all determined by the setup of the facial detection algorithm and those guidelines determine how faces are detected. This method is focused around human-determined rules for detecting facial features using the knowledge of specific distinguishing characteristics of human faces at the foundation of the algorithm \cite{Medium}.
+
+\subsection{Strengths \& Weaknesses}
+Strengths of the knowledge-based facial detection method are that one has greater control over the parameters of the algorithm and detection guidelines are straight-forward. When developing and testing the facial detection program the programmers can determine what features of a face are more important to focus on \cite{Medium}. When testing the program on different images there is a specific outcome to achieve - detect set facial features based on set guidelines. If there is a parameter that isn't being detected or is off in some way one can more quickly determine which guidelines are being violated. Since the regulations of the program are pre-set by the programmer, a knowledge-based method is more straight-forward to work with. Once the program is up and running, it should have a fast processing speed and be able to detect other faces if the rules are coded correctly.
+
+Weaknesses of the knowledge-based method is that while the rules of the program are set initially, it can be difficult to fully translate those guidelines into code \cite{Detection}. The algorithm is set based on a human's idea of the main facial features of a person's face, yet there are all kinds of different images to make those rules work well with. One can easily identify which rules might be violated but adjusting the code to have images more closely fit the guideline can be tricky. For example, an image of a face whose features are measured with the person looking straight versus a turned face or unclear setting may make the measurement guidelines not work as well. The knowledge-based facial detection approach gives a clear detection objective set by humans but turning those guidelines into a universal detection program may be more complicated than it appears. 
+
+\subsection{Software}
+OpenCV is an open-source library that can be used within computer vision projects with many different machine learning tools, so it works well to aid in creating a knowledge-based facial detection program \cite{OpenCV}. Developers can create a set of rules to determine the guidelines for specific facial features and work with over 2,500 algorithm resources from OpenCV to make those rules form facial detection standards in their program \cite{OpenCV}. For the pedestrian detection project, OpenCV would allow me to focus on the refining a set of facial features to focus on when finding faces, then use different components of OpenCV libraries to ensure the Knowledge-based facial detection requirements are met.
+
+
+\section{Feature-based}
+
+\iffalse
+
+\fi
+\subsection{Description}
+Feature-based method takes a bottom-up approach where the program detects facial features first and works to detect invariant features \cite{Medium}. For this method, the features are detected through examining the edge, intensity, color, shape, etc. of a facial feature \cite{Medium}. The image is examined to find common variances in the face, grouping the components together to ensure they match. The facial feature groups are determined by spatial filters and the common grey level constraints \cite{Study}. For example, a nose may be detected from a face by examining the shape, intensity, and color of pixels centered in the middle of the face and compared with by the geometric constraints averaged by the sum of previous images. From there the probability that the feature we're examining is a nose is dependent on how similar its characteristics are to that of the faces before. Once all needed facial features are detected with a high likelihood of being correct, then that image is labeled as a face \cite{Study}. The Feature-based method is reliant on the common characteristics of facial features to piece together the detection of a face.
+
+\subsection{Strengths \& Weaknesses}
+Major strengths of the Feature-based method are that facial features are more likely to be located despite the orientation of the face. If a person is faced to the side or ad a different direction, the program is not fazed as it is not looking at the overall face but the distinctive features \cite{Detection}. This would make the speed of the program quicker as it would not need to run extra functions to detect faces from different angles, just the primary program. Since the method just examines the facial components and not the overall image it is simpler to detect a face versus other objects as you need all features to make the face. 
+
+Weaknesses of Feature-based facial detection is that the facial feature detection is dependent on a similar shape, color, intensity, etc. of the features so changes in the environment can affect results \cite{Study}. If a face is lit of in a different way or the image is grainy, the characteristics that determine the feature might be skewed. Also, if an environment is complex around the face then the program may have difficulty narrowing down the objects to examine and have a harder time distinguishing facial components.
+
+\subsection{Software}
+Face is software by Microsoft that uses the distinctive features of a face to mark a section of an image to be a person. The software examines 27 different elements of a face including the face edges, hair, eyes, eyebrows, mouth, nose, chin, and more \cite{Microsoft}. Each facial feature is measured with an x and y value delivered in a JSON file \cite{Microsoft}. This technology has a 70 percent accuracy, focusing on the facial features, making it a very accurate implementation \cite{Microsoft}. For the pedestrian project, this software would be used to compare program results with and could be used as a base to develop a program that works well with the street footage given. Face compares an image with 20 other images per minute, which allows for its high accuracy \cite{Microsoft}. The multiple data points from this software and the documentation within the Microsoft website gives the group plenty of resources to work with. The accuracy of Face is a major advantage to implementing a facial detection program with this software, yet it would need further evaluation to see if it's computing power usage is low enough.
+
+
+\section{Template-based}
+
+\iffalse
+
+\fi
+\subsection{Description}
+Template-based facial recognition method detects faces using set measurements with all features plotted out together. The regions of the face are pre-defined instead of separately detected and are marked based on contours in the face \cite{Detection}. The regions of the face form a set template that is hard-coded within the program and is compared to the shapes found in the image \cite{Medium}. For example, a template would consist of the shapes of the edge of a face, eyes, nose, mouth and other distinctive features. The template is then placed over the area of an image where the full set of features resembles those marked out in the guide. From there the measurements are compared between the different areas of the template face with the human face to see if the areas examined are close enough for the image to be marked as a human \cite{Medium}. The Template-based method uses the correlation between the image and the set of features to perform facial detection, resulting in the comparison of a more complete human face.
+
+\subsection{Strengths \& Weaknesses}
+Strengths of Template-based facial detection is that it is simple to implement and straight-forward in its usage. Since the template used to compare to the image is pre-defined, it is much easier to create versus a complicated multi-parameter comparison. The template distinguishes all different regions needed to create a full face, so it creates a set of standards for an image to be approved as a person \cite{Study}. The development of a template is clear to implement as once the measurements are set it is just down to the comparison aspect of the program versus constant re-evaluation. 
+
+Weaknesses of a Template-based approach are that it may not be very accurate and there are only so many templates that can cover all kinds of faces and poses \cite{Detection}. The templates may work well in a stable environment where a face takes up more of an image, but with large images, it is more difficult for the template to accurately match with a face \cite{Detection}. Also, humans have many different looking features and may be positioned in various ways, so generating a set of templates that universally covers these factors is not easy. With this, hard-coding enough templates take a very long time and does not seem realistic to generate quick enough results, also making the computing speed slow.
+
+\subsection{Software}
+The Facial Tracking DLL from Carnegie Mellon is an open-source project with many different facial detection libraries that use a Template-based approach \cite{Carnegie}. The facial detection libraries contain different functions that can allow one to form their facial templates by setting the different region measurements \cite{Carnegie}. With this I could develop a collection of facial templates that can detect faces with the street footage provided. There are also helper functions within the Facial Tracking DLL that would allow the templates to be optimized based on the images used to test the program. The Facial Tracking DLL would allow for simple implementation of a Template-based facial detection program, although the accuracy of the library functions is unknown and would need to be consistently verified. 
+
+\section{Conclusion}
+\subsection{Criteria Evaluation}
+\textbf{1:} Passes criteria \textbf{0:} Fails criteria
+    \begin{center}
+    \begin{tabular}{|l|l|l|l|l|l|}
+    \hline
+               & \textbf{Knowledge (OpenCV)} & \textbf{Feature (Microsoft Face)} & \textbf{Template (Face Tracking DLL)} \\ \hline
+    Speed &     1      &      1     &      0 \\ \hline
+    Accuracy &     1      &     1      &      0  \\ \hline
+    Simplicity &     0      &     1      &     0  \\ \hline
+    Resources &      1     &     1      &   1  \\ \hline
+    \textbf{Total} &      \textbf{3}     &   \textbf{4}        &      \textbf{1} \\ \hline 
+    \end{tabular}
+\end{center}
+With this table we can see how the different scores the methods and their software stack up against the criteria evaluated. Feature-based methodology fulfilled the most requirements (4/4), followed by Knowledge-based (3/4) and last with Template-based (1/4). 
+
+\subsection{Evaluation Discussion}
+In conclusion, Knowledge-based, Feature-based, and Template-based facial detection methods have various levels of accuracy and complexity, yet I consider the Feature-based approach to be the best fit for the project. The Knowledge-based approach allows for people to be detected from common guidelines although its implementation may be too complex for the time allotted, even with the OpenCV resources. The Template-based method could allow for quick implementation of a program to identify faces with the given Facial Detection DLL libraries, yet its accuracy is unknown. The Feature-based approach very accurately detects face and allows for simple implementation with the Microsoft Face detection resources. Although, the Feature-based method using Face may lead to more computing power depending on how quickly the images need to be processed. Overall, the Feature-based facial detection method's ease of development and validity are what influenced my decision to determine it as the best fit for the pedestrian detection project.
+
+\section{References}
+\let\oldaddcontentsline\addcontentsline% Store \addcontentsline
+\renewcommand{\addcontentsline}[3]{}% Make \addcontentsline a no-op
+\bibliographystyle{IEEEtran}  
+\bibliography{sources}
+\let\addcontentsline\oldaddcontentsline% Restore \addcontentsline
+
+\end{document}
