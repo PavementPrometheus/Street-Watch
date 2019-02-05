@@ -27,7 +27,8 @@ def create_data():
                  'hrefs': ["/pavement/" + str(ID) for ID in record]}
             else:
                 response = 'Inserted 1 document'
-                result = {'id': str(record)}
+                result = {'message': response, 'id': str(record),
+                 'href': "/pavement/" + str(ID)}
             code   = 201
     except:
         # Error while handling user request
@@ -51,7 +52,7 @@ def retrieve_data():
             code   = 200
         else:
             # If the results from the query is empty
-            result = {'error': 'Not found'}
+            result = {'error': 'Resources not found'}
             code   = 404
     except:
         # Error while handling user request
@@ -75,8 +76,9 @@ def retrieve_document(_id):
             code   = 200
         else:
             # If the results from the query is empty
-            result = {'error': 'Not found'}
-            code   = 404
+            response = 'Resource {} not found'.format(_id)
+            result   = {'error': response}
+            code     = 404
     except:
         # Error while handling user request
         result = {'error': 'Server Error'}
@@ -108,13 +110,13 @@ def update_document(_id):
             # We throw a 500 error if ObjectId doesn't parse the input correctly
             updated = mongo.db.pavement.update_one({"_id": ObjectId(_id)}, data)
             if updated.modified_count > 0:
-                response = 'Updated _id: {}'.format(_id)
-                result   = {'message': response}
+                result = {'id': str(record), 'href': "/pavement/" + str(ID)}
                 code     = 200
             else:
                 # If the results from the query is empty
-                result = {'error': 'Not found'}
-                code   = 404
+                response = 'Resource {} not found'.format(_id)
+                result   = {'error': response}
+                code     = 404
     except:
         # Error while handling user request
         result = {'error': 'Server Error'}
@@ -156,6 +158,7 @@ def remove_document(_id):
     result = {'error': 'Bad Request'}
     code   = 400
     try:
+        # We throw a 500 error if ObjectId doesn't parse the input correctly
         deleted  = mongo.db.pavement.delete_one({"_id": ObjectId(_id)})
         if deleted.deleted_count > 0:
             response = 'Deleted _id: {}'.format(_id)
@@ -163,8 +166,9 @@ def remove_document(_id):
             code     = 200
         else:
             # If the results from the query is empty
-            result = {'error': 'Not found'}
-            code   = 404
+            response = 'Resource {} not found'.format(_id)
+            result   = {'error': response}
+            code     = 404
     except:
         # Error while handling user request
         result = {'error': 'Server Error'}
