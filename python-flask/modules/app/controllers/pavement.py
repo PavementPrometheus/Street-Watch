@@ -41,6 +41,8 @@ def retrieve_data():
     """
     Function to query the database
     """
+    # TODO: Change this to format responses like multiple retrieve_document calls
+        # Will return a 207
     # Default return values
     result = {'error': 'Bad Request'}
     code   = 400
@@ -90,6 +92,7 @@ def update_data():
     """
     Function to update documents in the database
     """
+    # Will return a 207
     # Default return values
     result = {'error': 'Bad Request'}
     code   = 400
@@ -128,6 +131,8 @@ def delete_data():
     """
     Function to remove documents from the database
     """
+    # TODO: Change this to format responses like multiple delete_document calls
+        # Will return a 207
     # Default return values
     result = {'error': 'Bad Request'}
     code   = 400
@@ -150,7 +155,7 @@ def delete_data():
     return jsonify(result), code
 
 @app.route('/pavement/<_id>', methods=['DELETE'])
-def remove_document(_id):
+def delete_document(_id):
     """
     Function to remove a single document from the database
     """
