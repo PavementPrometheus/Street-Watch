@@ -31,4 +31,4 @@ mongo = PyMongo(app)
 # ObjectId & datetime object while jsonifying the response.
 app.json_encoder = JSONTimeIDEncoder
 
-from modules.app.controllers import *
+from app.pavement import *

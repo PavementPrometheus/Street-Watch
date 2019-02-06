@@ -15,5 +15,5 @@ EXPOSE 4000
 RUN pip install --upgrade pip 
 RUN pip install -r requirements.txt
 
-# Run index.py when the container launches
-CMD ["python", "index.py"]
+# Run app.py when the container launches
+CMD ["python", "pavementapp.py"]
