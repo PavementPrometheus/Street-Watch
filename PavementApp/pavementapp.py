@@ -20,7 +20,7 @@ def index():
 @app.errorhandler(404)
 def page_not_found(error):
     """ error handler """
-    LOG.error(error)
+    app.logger.error(error)
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 
