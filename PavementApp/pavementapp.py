@@ -1,7 +1,7 @@
 import os
 import sys
 import requests
-from flask import jsonify, request, make_response, send_from_directory
+from flask import jsonify, request, make_response, render_template, send_from_directory
 from app import app
 
 # Port variable to run the server on. Taken from docker.
@@ -9,10 +9,12 @@ PORT = os.environ.get('PORT')
 
 
 @app.route('/')
+@app.route('/index')
 def index():
     """ serve static index file """
-    folder = os.path.join('modules', 'app', 'dist')
-    return send_from_directory(folder, 'index.html')
+    return render_template('index.html', 
+                           title='Placeholder', 
+                           body='Placeholder')
 
 
 # Since the data will primarily be accessed by a machine,
@@ -22,15 +24,6 @@ def page_not_found(error):
     """ error handler """
     app.logger.error(error)
     return make_response(jsonify({'error': 'Not found'}), 404)
-
-
-@app.route('/<path:path>')
-def static_proxy(path):
-    """ serve static route URIs """
-    folder = os.path.join('modules', 'app', 'dist')
-    fileName = path.split('/')[-1]
-    dirName = os.path.join(folder, '/'.join(path.split('/')[:-1]))
-    return send_from_directory(dirName, fileName)
 
 
 if __name__ == '__main__':
