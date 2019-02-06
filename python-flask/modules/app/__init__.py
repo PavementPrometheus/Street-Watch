@@ -22,11 +22,13 @@ class JSONTimeIDEncoder(json.JSONEncoder):
 # Create the flask object
 app = Flask(__name__)
 
-# Add the mongo url to flask config so that flask_pymongo can use it to make a connection
+# Add the mongo url to flask config so that
+# flask_pymongo can use it to make a connection
 app.config['MONGO_URI'] = os.environ.get('DB')
 mongo = PyMongo(app)
 
-# Use the modified encoder class to handle ObjectId & datetime object while jsonifying the response.
+# Use the modified encoder class to handle
+# ObjectId & datetime object while jsonifying the response.
 app.json_encoder = JSONTimeIDEncoder
 
-from app.controllers import *
+from modules.app.controllers import *

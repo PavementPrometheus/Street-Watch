@@ -3,7 +3,7 @@ import sys
 import requests
 from flask import jsonify, request, make_response, send_from_directory
 
-# Change the root path for execution to the modules folder 
+# Change the root path for execution to the modules folder
 ROOT_PATH = os.path.dirname(os.path.realpath(__file__))
 os.environ.update({'ROOT_PATH': ROOT_PATH})
 sys.path.append(os.path.join(ROOT_PATH, 'modules'))
@@ -20,7 +20,8 @@ LOG = logger.get_root_logger(os.environ.get(
 PORT = os.environ.get('PORT')
 
 
-# Since the data will primarily be accessed by a machine, responses will be in json form. 
+# Since the data will primarily be accessed by a machine,
+#  responses will be in json form.
 @app.errorhandler(404)
 def page_not_found(error):
     """ error handler """
@@ -38,11 +39,12 @@ def index():
 def static_proxy(path):
     """ serve static route URIs """
     file_name = path.split('/')[-1]
-    dir_name  = os.path.join('dist', '/'.join(path.split('/')[:-1]))
+    dir_name = os.path.join('dist', '/'.join(path.split('/')[:-1]))
     return send_from_directory(dir_name, file_name)
 
 
 if __name__ == '__main__':
     LOG.info('running environment: %s', os.environ.get('ENV'))
-    app.config['DEBUG'] = os.environ.get('ENV') == 'development' # Debug mode if development env
-    app.run(host='0.0.0.0', port=int(PORT)) # Run the app
+    # Debug mode if development env
+    app.config['DEBUG'] = os.environ.get('ENV') == 'development'
+    app.run(host='0.0.0.0', port=int(PORT))  # Run the app
