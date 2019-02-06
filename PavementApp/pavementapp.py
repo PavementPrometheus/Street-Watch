@@ -30,7 +30,7 @@ def static_proxy(path):
     folder = os.path.join('modules', 'app', 'dist')
     fileName = path.split('/')[-1]
     dirName = os.path.join(folder, '/'.join(path.split('/')[:-1]))
-    return send_from_directory(dir_name, file_name)
+    return send_from_directory(dirName, fileName)
 
 
 if __name__ == '__main__':
