@@ -18,8 +18,8 @@ def create_data():
             if isinstance(record, list):
                 response = 'Inserted {} documents'.format(len(record))
                 result = {'message': response,
-                          'ids': [str(ID) for ID in record],
-                          'hrefs': ["/pavement/" + str(ID) for ID in record]}
+                          'id': [str(ID) for ID in record],
+                          'href': ["/pavement/" + str(ID) for ID in record]}
             else:
                 response = 'Inserted 1 document'
                 result = {'message': response,
