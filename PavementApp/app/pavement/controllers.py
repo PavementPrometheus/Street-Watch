@@ -1,9 +1,10 @@
-from flask import request, jsonify
-from app import app, mongo
+from flask import request, jsonify, Blueprint
+from app import mongo
 from bson.objectid import ObjectId
 
+pavementAPI = Blueprint('pavementAPI', __name__, url_prefix='/pavement')
 
-@app.route('/pavement', methods=['POST'])
+@pavementAPI.route('', methods=['POST'])
 def create_data():
     """
     Function to add documents to the database
@@ -33,7 +34,7 @@ def create_data():
     return jsonify(result), code
 
 
-@app.route('/pavement', methods=['GET'])
+@pavementAPI.route('', methods=['GET'])
 def retrieve_data():
     """
     Function to query the database
@@ -61,7 +62,49 @@ def retrieve_data():
     return jsonify(result), code
 
 
-@app.route('/pavement/<_id>', methods=['GET'])
+@pavementAPI.route('', methods=['PATCH'])
+def update_data():
+    """
+    Function to update documents in the database
+    """
+    # Will return a 207
+    # Default return values
+    result = {'error': 'Bad Request'}
+    code = 400
+    # TODO
+    return jsonify(result), code
+
+
+@pavementAPI.route('', methods=['DELETE'])
+def delete_data():
+    """
+    Function to remove documents from the database
+    """
+    # TODO: Change this to format responses like multiple delete_document calls
+    # Will return a 207
+    # Default return values
+    result = {'error': 'Bad Request'}
+    code = 400
+    try:
+        query = request.get_json()
+        deleted = mongo.db.pavement.delete_many(query)
+        count = deleted.deleted_count
+        if count > 0:
+            response = 'Deleted {} result(s)'.format(count)
+            result = {'message': response}
+            code = 200
+        else:
+            # If the results from the query is empty
+            result = {'error': 'Not found'}
+            code = 404
+    except Exception as inst:  # TODO Sometimes catches 400 errors.
+        # Error while handling user request
+        result = {'error': 'Server Error ' + str(type(inst)) + ' ' + str(inst)}
+        code = 500
+    return jsonify(result), code
+
+
+@pavementAPI.route('/<_id>', methods=['GET'])
 def retrieve_document(_id):
     """
     Function to query the database
@@ -87,20 +130,7 @@ def retrieve_document(_id):
     return jsonify(result), code
 
 
-@app.route('/pavement', methods=['PATCH'])
-def update_data():
-    """
-    Function to update documents in the database
-    """
-    # Will return a 207
-    # Default return values
-    result = {'error': 'Bad Request'}
-    code = 400
-    # TODO
-    return jsonify(result), code
-
-
-@app.route('/pavement/<_id>', methods=['PATCH'])
+@pavementAPI.route('/<_id>', methods=['PATCH'])
 def update_document(_id):
     """
     Function to update a single document in the database
@@ -131,36 +161,7 @@ def update_document(_id):
     return jsonify(result), code
 
 
-@app.route('/pavement', methods=['DELETE'])
-def delete_data():
-    """
-    Function to remove documents from the database
-    """
-    # TODO: Change this to format responses like multiple delete_document calls
-    # Will return a 207
-    # Default return values
-    result = {'error': 'Bad Request'}
-    code = 400
-    try:
-        query = request.get_json()
-        deleted = mongo.db.pavement.delete_many(query)
-        count = deleted.deleted_count
-        if count > 0:
-            response = 'Deleted {} result(s)'.format(count)
-            result = {'message': response}
-            code = 200
-        else:
-            # If the results from the query is empty
-            result = {'error': 'Not found'}
-            code = 404
-    except Exception as inst:  # TODO Sometimes catches 400 errors.
-        # Error while handling user request
-        result = {'error': 'Server Error ' + str(type(inst)) + ' ' + str(inst)}
-        code = 500
-    return jsonify(result), code
-
-
-@app.route('/pavement/<_id>', methods=['DELETE'])
+@pavementAPI.route('/<_id>', methods=['DELETE'])
 def delete_document(_id):
     """
     Function to remove a single document from the database

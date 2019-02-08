@@ -2,11 +2,13 @@ import os
 import sys
 import requests
 from flask import jsonify, request, make_response, render_template, send_from_directory
-from app import app
+from app import create_app
+
 
 # Port variable to run the server on. Taken from docker.
 PORT = os.environ.get('PORT')
 
+app = create_app()
 
 @app.route('/')
 @app.route('/index')

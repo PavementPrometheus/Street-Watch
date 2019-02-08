@@ -18,16 +18,32 @@ class JSONTimeIDEncoder(json.JSONEncoder):
         else:
             return json.JSONEncoder.default(self, o)
 
-# Create the flask object
-app = Flask(__name__)
+mongo = PyMongo()
 
-# Add the mongo url to flask config so that
-# flask_pymongo can use it to make a connection
-app.config['MONGO_URI'] = os.environ.get('DB')
-mongo = PyMongo(app)
+def create_app():
+    """
+    Flask application factory that creates app instances.
+    Every time this function is called, a new application instance is created. The reason
+    why an application factory is needed is because we need to use different configurations
+    for running our tests.
+    :return Flask object: Returns a Flask application instance
+    """
+    # Create the flask object. We don't have instances yet
+    app = Flask(__name__, instance_relative_config=False)
 
-# Use the modified encoder class to handle
-# ObjectId & datetime object while jsonifying the response.
-app.json_encoder = JSONTimeIDEncoder
+    # Add the mongo url to flask config so that
+    # flask_pymongo can use it to make a connection
+    app.config['MONGO_URI'] = os.environ.get('DB')
 
-from app.pavement import *
+    # Use the modified encoder class to handle
+    # ObjectId & datetime object while jsonifying the response.
+    app.json_encoder = JSONTimeIDEncoder
+
+    # Register the blueprint controllers for the API
+    from app.pavement.controllers import pavementAPI
+    app.register_blueprint(pavementAPI)
+    
+    # Initialize the database
+    mongo.init_app(app)
+
+    return app
