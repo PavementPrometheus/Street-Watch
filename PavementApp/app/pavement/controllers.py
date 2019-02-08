@@ -2,9 +2,9 @@ from flask import request, jsonify, Blueprint
 from app import mongo
 from bson.objectid import ObjectId
 
-pavement = Blueprint('pavement', __name__, url_prefix='/pavement')
+pavementAPI = Blueprint('pavementAPI', __name__, url_prefix='/pavement')
 
-@pavement.route('/', methods=['POST'])
+@pavementAPI.route('', methods=['POST'])
 def create_data():
     """
     Function to add documents to the database
@@ -34,7 +34,7 @@ def create_data():
     return jsonify(result), code
 
 
-@pavement.route('/', methods=['GET'])
+@pavementAPI.route('', methods=['GET'])
 def retrieve_data():
     """
     Function to query the database
@@ -62,7 +62,7 @@ def retrieve_data():
     return jsonify(result), code
 
 
-@pavement.route('/', methods=['PATCH'])
+@pavementAPI.route('', methods=['PATCH'])
 def update_data():
     """
     Function to update documents in the database
@@ -75,7 +75,7 @@ def update_data():
     return jsonify(result), code
 
 
-@pavement.route('/', methods=['DELETE'])
+@pavementAPI.route('', methods=['DELETE'])
 def delete_data():
     """
     Function to remove documents from the database
@@ -104,7 +104,7 @@ def delete_data():
     return jsonify(result), code
 
 
-@pavement.route('/<_id>', methods=['GET'])
+@pavementAPI.route('/<_id>', methods=['GET'])
 def retrieve_document(_id):
     """
     Function to query the database
@@ -130,7 +130,7 @@ def retrieve_document(_id):
     return jsonify(result), code
 
 
-@pavement.route('/<_id>', methods=['PATCH'])
+@pavementAPI.route('/<_id>', methods=['PATCH'])
 def update_document(_id):
     """
     Function to update a single document in the database
@@ -161,7 +161,7 @@ def update_document(_id):
     return jsonify(result), code
 
 
-@pavement.route('/<_id>', methods=['DELETE'])
+@pavementAPI.route('/<_id>', methods=['DELETE'])
 def delete_document(_id):
     """
     Function to remove a single document from the database

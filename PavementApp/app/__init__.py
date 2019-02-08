@@ -40,8 +40,8 @@ def create_app():
     app.json_encoder = JSONTimeIDEncoder
 
     # Register the blueprint controllers for the API
-    from app.pavement.controllers import pavement
-    app.register_blueprint(pavement)
+    from app.pavement.controllers import pavementAPI
+    app.register_blueprint(pavementAPI)
     
     # Initialize the database
     mongo.init_app(app)
