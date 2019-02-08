@@ -1,7 +1,7 @@
 import os
 import sys
 import requests
-from flask import jsonify, request, make_response, render_template, send_from_directory
+from flask import render_template
 from app import create_app
 
 
@@ -10,22 +10,14 @@ PORT = os.environ.get('PORT')
 
 app = create_app()
 
+
 @app.route('/')
 @app.route('/index')
 def index():
     """ serve static index file """
-    return render_template('index.html', 
-                           title='Placeholder', 
+    return render_template('index.html',
+                           title='Placeholder',
                            body='Placeholder')
-
-
-# Since the data will primarily be accessed by a machine,
-#  responses will be in json form.
-@app.errorhandler(404)
-def page_not_found(error):
-    """ error handler """
-    app.logger.error(error)
-    return make_response(jsonify({'error': 'Not found'}), 404)
 
 
 if __name__ == '__main__':

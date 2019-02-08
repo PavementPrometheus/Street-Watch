@@ -1,8 +1,11 @@
 from flask import request, jsonify, Blueprint
 from app import mongo
 from bson.objectid import ObjectId
+from bson.errors import InvalidId
+from werkzeug.exceptions import BadRequest
 
 pavementAPI = Blueprint('pavementAPI', __name__, url_prefix='/pavement')
+
 
 @pavementAPI.route('', methods=['POST'])
 def create_data():
@@ -27,7 +30,9 @@ def create_data():
                           'id': str(record),
                           'href': "/pavement/" + str(record)}
             code = 201
-    except Exception as inst:  # TODO Sometimes catches 400 errors.
+    except BadRequest:
+        pass
+    except Exception as inst:
         # Error while handling user request
         result = {'error': 'Server Error ' + str(type(inst)) + ' ' + str(inst)}
         code = 500
@@ -55,7 +60,9 @@ def retrieve_data():
             # If the results from the query is empty
             result = {'error': 'Resources not found'}
             code = 404
-    except Exception as inst:  # TODO Sometimes catches 400 errors.
+    except BadRequest:
+        pass
+    except Exception as inst:
         # Error while handling user request
         result = {'error': 'Server Error ' + str(type(inst)) + ' ' + str(inst)}
         code = 500
@@ -97,7 +104,9 @@ def delete_data():
             # If the results from the query is empty
             result = {'error': 'Not found'}
             code = 404
-    except Exception as inst:  # TODO Sometimes catches 400 errors.
+    except BadRequest:
+        pass
+    except Exception as inst:
         # Error while handling user request
         result = {'error': 'Server Error ' + str(type(inst)) + ' ' + str(inst)}
         code = 500
@@ -113,7 +122,6 @@ def retrieve_document(_id):
     result = {'error': 'Bad Request'}
     code = 400
     try:
-        # We throw a 500 error if ObjectId doesn't parse the input correctly
         document = mongo.db.pavement.find({"_id": ObjectId(_id)})
         if document.count() > 0:
             result = {'result': document[0]}
@@ -123,7 +131,14 @@ def retrieve_document(_id):
             response = 'Resource {} not found'.format(_id)
             result = {'error': response}
             code = 404
-    except Exception as inst:  # TODO Sometimes catches 400 errors.
+    except BadRequest:
+        pass
+    except InvalidId:
+        # Ill formed object id
+        response = 'Resource {} not found'.format(_id)
+        result = {'error': response}
+        code = 404
+    except Exception as inst:
         # Error while handling user request
         result = {'error': 'Server Error ' + str(type(inst)) + ' ' + str(inst)}
         code = 500
@@ -141,8 +156,6 @@ def update_document(_id):
     try:
         data = request.get_json()
         if(data is not None):
-            # We throw a 500 error if ObjectId
-            # doesn't parse the input correctly
             updated = mongo.db.pavement.update_one({"_id": ObjectId(_id)},
                                                    data)
             if updated.modified_count > 0:
@@ -154,7 +167,14 @@ def update_document(_id):
                 response = 'Resource {} not found'.format(_id)
                 result = {'error': response}
                 code = 404
-    except Exception as inst:  # TODO Sometimes catches 400 errors.
+    except BadRequest:
+        pass
+    except InvalidId:
+        # Ill formed object id
+        response = 'Resource {} not found'.format(_id)
+        result = {'error': response}
+        code = 404
+    except Exception as inst:
         # Error while handling user request
         result = {'error': 'Server Error ' + str(type(inst)) + ' ' + str(inst)}
         code = 500
@@ -181,7 +201,14 @@ def delete_document(_id):
             response = 'Resource {} not found'.format(_id)
             result = {'error': response}
             code = 404
-    except Exception as inst:  # TODO Sometimes catches 400 errors.
+    except BadRequest:
+        pass
+    except InvalidId:
+        # Ill formed object id
+        response = 'Resource {} not found'.format(_id)
+        result = {'error': response}
+        code = 404
+    except Exception as inst:
         # Error while handling user request
         result = {'error': 'Server Error ' + str(type(inst)) + ' ' + str(inst)}
         code = 500
