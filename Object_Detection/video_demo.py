@@ -15,7 +15,11 @@ import argparse
 import time
 import datetime
 import os
+import urllib.request
+import json
 
+streetapiurl = 'http://192.168.99.100:4000/pavement'
+location = 'Intersection of 1234 fake st. and 5th fabricated blvd.'
 
 def get_test_input(input_dim, CUDA):
     img = cv2.imread("dog-cycle-car.png")
@@ -43,8 +47,16 @@ def prep_image(img, inp_dim):
     img_ = img[:,:,::-1].transpose((2,0,1)).copy()
     img_ = torch.from_numpy(img_).float().div(255.0).unsqueeze(0)
     return img_, orig_im, dim
+    
+def send_request(data):
+    url =  streetapiurl
+    json_data = data.encode('utf-8')
+    req = urllib.request.Request(url)
+    req.add_header('Content-Type', 'application/json; charset=utf-8')
+    req.add_header('Content-Length', len(json_data))
+    rep = urllib.request.urlopen(req, json_data)
 
-def write(x, img, fr):
+def write(x, img, fr, curdate):
     c1 = tuple(x[1:3].int())
     c2 = tuple(x[3:5].int())
     cls = int(x[-1])
@@ -54,10 +66,20 @@ def write(x, img, fr):
         x2 = int(c2[0])
         y1 = int(c1[1])
         y2 = int(c2[1])
-        #timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('_%Y_%m_%d_%H_%M_%S_%f')
         name = str(cls) + "_" + str(fr) + "_x1-"+ str(x1) + "_x2-"+ str(x2) + "_y1-"+ str(y1) + "_y2-"+ str(y2) + ".png"
         crop_object = img[y1:y2, x1:x2]
         cv2.imwrite(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'output', 'photos', name), crop_object)
+        
+        data  = {}
+        data['date'] = curdate
+        data['type'] = 'Person'
+        data['location'] = location
+        data['x1'] = x1
+        data['x2'] = x2
+        data['y1'] = y1
+        data['y2'] = y2
+        json_data = json.dumps(data)
+        send_request(json_data)
     
     label = "{0}".format(classes[cls])
     color = random.choice(colors)
@@ -148,6 +170,11 @@ if __name__ == '__main__':
     out = cv2.VideoWriter(output_file, int(FRAME_FOURCC), FRAME_FPS, (int(FRAME_WIDTH),int(FRAME_HEIGHT)))
     assert cap.isOpened(), 'Cannot capture source'
     
+    try:
+        os.makedirs(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'output', 'photos'))
+    except FileExistsError:
+        pass
+    
     frames = 0
     start = time.time()
     start_time = time.time()    
@@ -183,9 +210,6 @@ if __name__ == '__main__':
                     break
                 continue
             
-            
-
-            
             im_dim = im_dim.repeat(output.size(0), 1)
             scaling_factor = torch.min(inp_dim/im_dim,1)[0].view(-1,1)
             
@@ -208,7 +232,10 @@ if __name__ == '__main__':
             cv2.putText(orig_im, str1+str(counts.count(0)), (20,55), cv2.FONT_HERSHEY_PLAIN, 2, [225,255,255], 1);
             cv2.putText(orig_im, str2+str(counts.count(2)), (20,95), cv2.FONT_HERSHEY_PLAIN, 2, [225,255,255], 1);
             
-            list(map(lambda x: write(x, orig_im, frames), output))
+            #curdate = int(round(time.time() * 1000))
+            curdate = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
+            
+            list(map(lambda x: write(x, orig_im, frames, curdate), output))
             
             cv2.imshow("frame", orig_im)
             if not args.noshow:
