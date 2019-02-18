@@ -11,8 +11,6 @@ class BaseTest(TestCase):
 
     def setUp(self):
         mongo.db.create_collection('pavement')
-        return
 
     def tearDown(self):
         mongo.db.drop_collection('pavement')
-        return 
