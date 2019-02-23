@@ -1,13 +1,14 @@
 import os
 import json
 import datetime
+
 from bson.objectid import ObjectId
 from flask import Flask, jsonify, make_response
 from flask_pymongo import PyMongo
 
 
 class JSONTimeIDEncoder(json.JSONEncoder):
-    ''' extend json-encoder class'''
+    """ extends json-encoder class """
 
     # Will give a false positive from pylint since we are overriding "default"
     def default(self, o):
@@ -35,12 +36,21 @@ def page_not_found(error):
 
 
 def create_app():
-    """
-    Flask application factory that creates app instances.
-    Every time this function is called, a new application instance is created.
-    The reason why an application factory is needed is because we need to use
-    different configurations for running our tests.
-    :return Flask object: Returns a Flask application instance
+    """ Creates a Flask app instance
+
+    Creates the app and loads it with the pavement controllers as
+    well as loading the app with the mongodb database instance taken 
+    from the local environment. This comes from the docker settings.
+
+    Args:
+        none
+
+    Returns:
+        A flask app using the pavement controllers for a restful API
+        interface.  
+
+    Raises:
+        none
     """
     # Create the flask object. We don't have instances yet
     app = Flask(__name__, instance_relative_config=False)
