@@ -229,7 +229,7 @@ def update_document(_id):
                 response = 'Resource {} not found'.format(_id)
                 result = {'error': response}
                 code = 404
-    except (BadRequest, BulkWriteError):
+    except BadRequest:
         pass
     except InvalidId:
         # Ill formed object id
