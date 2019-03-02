@@ -50,6 +50,9 @@ class PavementAPITests(BaseTest):
                                       data=dumps(request),
                                       content_type='application/json')
         self.assertEqual(response.status_code, 200)
+        documentNum = mongo.db.pavement.count_documents({})
+        self.assertEqual(documentNum, 0)
+
 
     def test_multiple_delete(self):
         docs = [dict(same=True, test='hey kids'), 
@@ -62,7 +65,6 @@ class PavementAPITests(BaseTest):
         self.assertEqual(response.status_code, 200)
         documentNum = mongo.db.pavement.count_documents({})
         self.assertEqual(documentNum, 0)
-
 
     def test_single_id_get(self):
         request = dict(test='hey kids')
@@ -77,3 +79,17 @@ class PavementAPITests(BaseTest):
         url = '/pavement/' + str(record.inserted_id)
         response = self.client.delete(url)
         self.assertEqual(response.status_code, 200)
+        documentNum = mongo.db.pavement.count_documents({})
+        self.assertEqual(documentNum, 0)
+
+    def test_single_id_patch(self):
+        request = dict(test='hey kids')
+        newRequest = {'$set':{'test':'it\'s kids'}}
+        record = mongo.db.pavement.insert_one(request)
+        url = '/pavement/' + str(record.inserted_id)
+        response = self.client.patch(url,
+                                     data=dumps(newRequest),
+                                     content_type='application/json')
+        self.assertEqual(response.status_code, 200)
+        insertedDoc = mongo.db.pavement.find_one({"_id": record.inserted_id})
+        self.assertEqual(insertedDoc['test'], 'it\'s kids')
