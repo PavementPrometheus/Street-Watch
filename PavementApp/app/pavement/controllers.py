@@ -2,6 +2,7 @@ from flask import request, jsonify, Blueprint
 from bson.objectid import ObjectId
 from bson.errors import InvalidId
 from werkzeug.exceptions import BadRequest
+from pymongo.errors import BulkWriteError
 
 from app import mongo
 
@@ -49,7 +50,7 @@ def create_data():
                           'id': str(record),
                           'href': "/pavement/" + str(record)}
             code = 201
-    except BadRequest:
+    except (BadRequest, BulkWriteError):
         pass
     except Exception as inst:
         # Error while handling user request
@@ -77,9 +78,6 @@ def retrieve_data():
     Raises:
         none
     """
-    # TODO: Change this to format responses like
-    # multiple retrieve_document calls
-    # Will return a 207
     # Default return values
     result = {'error': 'Bad Request'}
     code = 400
@@ -102,19 +100,6 @@ def retrieve_data():
     return jsonify(result), code
 
 
-@pavementAPI.route('', methods=['PATCH'])
-def update_data():
-    """
-    Function to update documents in the database
-    """
-    # Will return a 207
-    # Default return values
-    result = {'error': 'Bad Request'}
-    code = 400
-    # TODO
-    return jsonify(result), code
-
-
 @pavementAPI.route('', methods=['DELETE'])
 def delete_data():
     """ Removes documents in the mongo database matching a query
@@ -133,8 +118,6 @@ def delete_data():
     Raises:
         none
     """
-    # TODO: Change this to format responses like multiple delete_document calls
-    # Will return a 207
     # Default return values
     result = {'error': 'Bad Request'}
     code = 400
@@ -183,9 +166,9 @@ def retrieve_document(_id):
     result = {'error': 'Bad Request'}
     code = 400
     try:
-        document = mongo.db.pavement.find({"_id": ObjectId(_id)})
-        if document.count() > 0:
-            result = {'result': document[0]}
+        document = mongo.db.pavement.find_one({"_id": ObjectId(_id)})
+        if document is not None:
+            result = {'result': document}
             code = 200
         else:
             # If the results from the query is empty
@@ -246,7 +229,7 @@ def update_document(_id):
                 response = 'Resource {} not found'.format(_id)
                 result = {'error': response}
                 code = 404
-    except BadRequest:
+    except (BadRequest, BulkWriteError):
         pass
     except InvalidId:
         # Ill formed object id
