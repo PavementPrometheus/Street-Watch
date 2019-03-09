@@ -190,7 +190,6 @@ def delete_document(_id):
     result = {'error': 'Bad Request'}
     code = 400
     try:
-        # We throw a 500 error if ObjectId doesn't parse the input correctly
         deleted = mongo.db.pavement.delete_one({"_id": ObjectId(_id)})
         if deleted.deleted_count > 0:
             response = 'Deleted _id: {}'.format(_id)

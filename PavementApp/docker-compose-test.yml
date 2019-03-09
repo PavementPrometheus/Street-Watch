@@ -1,0 +1,8 @@
+version: '3.7'
+services:
+ mongodb:
+  environment:
+   - MONGO_DATA_DIR=/usr/data/testdb
+   - MONGO_LOG_DIR=/dev/null
+  volumes:
+   - ./data/testdb:/usr/data/testdb
