@@ -10,7 +10,7 @@ services:
   volumes:
    - .:/app
   environment:
-   - ENV=development # development is debug, production is normal.
+   - ENV=production # development is debug, production is normal.
    - PORT=4000
    - DB=mongodb://mongodb:27017/pavement
  mongodb:

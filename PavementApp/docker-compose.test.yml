@@ -1,5 +1,9 @@
 version: '3.7'
 services:
+ web:
+  environment:
+   - ENV=development # debug mode
+   - DB=mongodb://mongodb:27017/test
  mongodb:
   environment:
    - MONGO_DATA_DIR=/usr/data/testdb
