@@ -1,16 +1,36 @@
 from flask import request, jsonify, Blueprint
-from app import mongo
 from bson.objectid import ObjectId
 from bson.errors import InvalidId
 from werkzeug.exceptions import BadRequest
+from pymongo.errors import BulkWriteError
+
+from app import mongo
+
 
 pavementAPI = Blueprint('pavementAPI', __name__, url_prefix='/pavement')
 
 
 @pavementAPI.route('', methods=['POST'])
 def create_data():
-    """
-    Function to add documents to the database
+    """ Creates a number of documents in the mongo database
+
+    Takes user's JSON from an HTTP POST request and adds the data 
+    to the database.
+
+    Args:
+        None directly, takes JSON data from the request
+
+    Returns:
+        A pair (JSON: response, Int: response code)
+        which tells the user if their request was correct and tells
+        the user where their data can be accessed from. 
+
+        If the user asked to put multiple documents in the database, 
+        then the function does that and tells the user how many were
+        added.
+
+    Raises:
+        none
     """
     # Default return values
     result = {'error': 'Bad Request'}
@@ -30,7 +50,7 @@ def create_data():
                           'id': str(record),
                           'href': "/pavement/" + str(record)}
             code = 201
-    except BadRequest:
+    except (BadRequest, BulkWriteError):
         pass
     except Exception as inst:
         # Error while handling user request
@@ -41,12 +61,23 @@ def create_data():
 
 @pavementAPI.route('', methods=['GET'])
 def retrieve_data():
+    """ Queries the database for a specified kind of document
+
+    Takes user's query from an HTTP GET request and searches the
+    database for matching data. If any are found, return them to 
+    the user.
+
+    Args:
+        None directly, takes query data from the request
+
+    Returns:
+        A pair (JSON: response, Int: response code)
+        which tells the user if their request was correct and 
+        gives the user the documents matching their query.
+
+    Raises:
+        none
     """
-    Function to query the database
-    """
-    # TODO: Change this to format responses like
-    # multiple retrieve_document calls
-    # Will return a 207
     # Default return values
     result = {'error': 'Bad Request'}
     code = 400
@@ -69,26 +100,24 @@ def retrieve_data():
     return jsonify(result), code
 
 
-@pavementAPI.route('', methods=['PATCH'])
-def update_data():
-    """
-    Function to update documents in the database
-    """
-    # Will return a 207
-    # Default return values
-    result = {'error': 'Bad Request'}
-    code = 400
-    # TODO
-    return jsonify(result), code
-
-
 @pavementAPI.route('', methods=['DELETE'])
 def delete_data():
+    """ Removes documents in the mongo database matching a query
+
+    Takes user's query from an HTTP DELETE request and searches the
+    database for matching data. If any are found, delete them.
+
+    Args:
+        None directly, takes query data from the request
+
+    Returns:
+        A pair (JSON: response, Int: response code)
+        which tells the user if their request was correct and 
+        gives the user the number of deleted documents.
+
+    Raises:
+        none
     """
-    Function to remove documents from the database
-    """
-    # TODO: Change this to format responses like multiple delete_document calls
-    # Will return a 207
     # Default return values
     result = {'error': 'Bad Request'}
     code = 400
@@ -115,16 +144,31 @@ def delete_data():
 
 @pavementAPI.route('/<_id>', methods=['GET'])
 def retrieve_document(_id):
-    """
-    Function to query the database
+    """ Queries the database for a specified document by ID and
+        returns it if found.
+
+    Takes an object's ID from the URL where a get request is sent
+    and searches the database for matching data. If it is found,
+    returns it to the user.
+
+    Args:
+        None directly, takes the ID of the object from the URL
+
+    Returns:
+        A pair (JSON: response, Int: response code)
+        which tells the user if their request was correct and 
+        gives the user the document matching their query.
+
+    Raises:
+        none
     """
     # Default return values
     result = {'error': 'Bad Request'}
     code = 400
     try:
-        document = mongo.db.pavement.find({"_id": ObjectId(_id)})
-        if document.count() > 0:
-            result = {'result': document[0]}
+        document = mongo.db.pavement.find_one({"_id": ObjectId(_id)})
+        if document is not None:
+            result = {'result': document}
             code = 200
         else:
             # If the results from the query is empty
@@ -147,8 +191,26 @@ def retrieve_document(_id):
 
 @pavementAPI.route('/<_id>', methods=['PATCH'])
 def update_document(_id):
-    """
-    Function to update a single document in the database
+    """ Queries the database for a specified document by ID and 
+        updates it if found.
+
+    Takes an object's ID from the URL where a get request is sent
+    and searches the database for matching data. If it is found,
+    update the internal data for that object based off of the 
+    user's JSON sent in the request.
+
+    Args:
+        None directly, takes the ID of the object from the URL
+                       also takes JSON from the request
+
+    Returns:
+        A pair (JSON: response, Int: response code)
+        which tells the user if their request was correct and 
+        if the document is updated, tells the user where their 
+        data can be accessed from. 
+
+    Raises:
+        none
     """
     # Default return values
     result = {'error': 'Bad Request'}
@@ -183,8 +245,23 @@ def update_document(_id):
 
 @pavementAPI.route('/<_id>', methods=['DELETE'])
 def delete_document(_id):
-    """
-    Function to remove a single document from the database
+    """ Queries the database for a specified document by ID and
+        removes it if found.
+
+    Takes an object's ID from the URL where a get request is sent
+    and searches the database for matching data. If it is found,
+    deletes the object.
+
+    Args:
+        None directly, takes the ID of the object from the URL
+
+    Returns:
+        A pair (JSON: response, Int: response code)
+        which tells the user if their request was correct and 
+        tells the user the ID of the deleted object.
+
+    Raises:
+        none
     """
     # Default return values
     result = {'error': 'Bad Request'}

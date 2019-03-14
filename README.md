@@ -9,9 +9,17 @@ In order to use the evaluate the code in this repo for the alpha release, please
    - Windows: https://docs.docker.com/docker-for-windows/install/
    - Mac    : https://docs.docker.com/docker-for-mac/install/
    - Linux  : https://docs.docker.com/install/linux/docker-ce/ubuntu/ 
-2. Run the docker container
+2. a. Run the docker container
    - `cd ~/Street-Watch/PavementApp`
    - `docker-compose up --build`
+
+2. b. Run the test docker container
+   - `cd ~/Street-Watch/PavementApp`
+   - `docker-compose -f ~/Street-Watch/PavementApp/docker-compose.yml -f ~/Street-Watch/PavementApp/docker-compose-test.yml up --build`
+
+3. b. Test the API
+   - `docker exec flask python -m unittest`
+
 ## Object Detection and Database Population
 1. Download yolov3.weights from google drive
    - https://drive.google.com/drive/u/1/folders/0ACU5WrVTgGFqUk9PVA/
