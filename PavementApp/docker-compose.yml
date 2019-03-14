@@ -10,7 +10,7 @@ services:
   volumes:
    - .:/app
   environment:
-   - ENV=development # development is debug, production is normal.
+   - ENV=production # development is debug, production is normal.
    - PORT=4000
    - DB=mongodb://mongodb:27017/pavement
  mongodb:
@@ -23,7 +23,7 @@ services:
    - ./data/db:/usr/data/db
   ports:
    - 27017:27017
-  command: mongod --smallfiles --logpath=/dev/null
+  command: mongod --smallfiles --logpath=/dev/null --port 27017 --bind_ip_all
 networks:
  default:
   name: web

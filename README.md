@@ -15,7 +15,7 @@ In order to use the evaluate the code in this repo for the alpha release, please
 
 2. b. Run the test docker container
    - `cd ~/Street-Watch/PavementApp`
-   - `docker-compose -f ~/Street-Watch/PavementApp/docker-compose.yml -f ~/Street-Watch/PavementApp/docker-compose-test.yml up --build`
+   - `docker-compose -f ~/Street-Watch/PavementApp/docker-compose.yml -f ~/Street-Watch/PavementApp/docker-compose.test.yml up --build`
 
 3. b. Test the API
    - `docker exec flask python -m unittest`
