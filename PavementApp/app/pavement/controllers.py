@@ -23,10 +23,22 @@ def create_data():
     Returns:
         A pair (JSON: response, Int: response code)
         which tells the user if their request was correct and tells
-        the user where their data can be accessed from. 
+        the user where their data can be accessed from.
+
+        Examples:
+        ({
+         "message":"Inserted 2 documents",
+         "id":["507f1f77bcf86cd799439011", "507f1f77bcf86cd799439012"],
+         "href":["/pavement/507f1f77bcf86cd799439011", "/pavement/507f1f77bcf86cd799439012"]
+        }, 201)
+        ({
+         "message":"Inserted 1 document",
+         "id":"507f1f77bcf86cd799439013",
+         "href":"/pavement/507f1f77bcf86cd799439013"
+        }, 201)
 
         If the user asked to put multiple documents in the database, 
-        then the function does that and tells the user how many were
+        then the function does and tells the user how many were
         added.
 
     Raises:
@@ -75,6 +87,9 @@ def retrieve_data():
         which tells the user if their request was correct and 
         gives the user the documents matching their query.
 
+        Example:
+        ({"results":[{_id:1, cars:3, time:7884848}, {_id:2, cars:4, time:9823492}]}, 200)
+
     Raises:
         none
     """
@@ -114,6 +129,10 @@ def delete_data():
         A pair (JSON: response, Int: response code)
         which tells the user if their request was correct and 
         gives the user the number of deleted documents.
+
+        Examples:
+        ({"message":"Deleted 3 result(s)}, 200)
+        ({"error":"Not found"}, 404)
 
     Raises:
         none
@@ -158,6 +177,9 @@ def retrieve_document(_id):
         A pair (JSON: response, Int: response code)
         which tells the user if their request was correct and 
         gives the user the document matching their query.
+
+        Example:
+        ({"result":{_id:1, cars:3, time:7884848}}, 200)
 
     Raises:
         none
@@ -209,6 +231,12 @@ def update_document(_id):
         if the document is updated, tells the user where their 
         data can be accessed from. 
 
+        Example:
+        ({
+         "id":"507f1f77bcf86cd799439013",
+         "href":"/pavement/507f1f77bcf86cd799439013"
+        }, 200)
+
     Raises:
         none
     """
@@ -259,6 +287,11 @@ def delete_document(_id):
         A pair (JSON: response, Int: response code)
         which tells the user if their request was correct and 
         tells the user the ID of the deleted object.
+
+        Example:
+        ({
+         "message":"Deleted _id: 507f1f77bcf86cd799439013"
+        },200)
 
     Raises:
         none
