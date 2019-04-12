@@ -58,6 +58,9 @@ def create_app():
     # flask_pymongo can use it to make a connection
     app.config['MONGO_URI'] = os.environ.get('DB')
 
+    # Choose a file storage location for the posted images
+    app.config['UPLOAD_FOLDER'] = os.environ.get('STORE')
+
     # Use the modified encoder class to handle
     # ObjectId & datetime object while jsonifying the response.
     app.json_encoder = JSONTimeIDEncoder
