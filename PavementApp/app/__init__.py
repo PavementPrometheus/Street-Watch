@@ -24,7 +24,6 @@ mongo = PyMongo()
 
 # Since the data will primarily be accessed by a machine,
 # responses will be in json form.
-# TODO: This should most likely be pulled into its own file
 def bad_request(error):
     """ 400 error handler """
     return make_response(jsonify({'error': 'Bad Request'}), 400)
