@@ -50,28 +50,14 @@ def create_data():
     code = 400
     try:
         data = request.get_json()
-        fileList = request.files()['file']
         if(data is not None):
             record = mongo.db.pavement.insert(data)
             if isinstance(record, list):
                 response = 'Inserted {} documents'.format(len(record))
                 result = {'message': response,
                           'id': [str(ID) for ID in record],
-                          'href': ["/pavement/" + str(ID) for ID in record]}
-                
-                if len(record) = len(fileList):
-                    result['image'] = []
-                    for ID, image in zip(record, fileList):
-                        filename = str(ID) + '.png'
-                        filelocation = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                        image.save(filelocation)
-                        result['image'].append('/pavement/images/' + filename
-                
+                          'href': ["/pavement/" + str(ID) for ID in record]} 
             else:
-                if fileList is not None:
-                    filename = str(record) + '.png'
-                    fileList[0].save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                    result['image'] = '/pavement/images/' + filename
                 response = 'Inserted 1 document'
                 result = {'message': response,
                           'id': str(record),
