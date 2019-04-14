@@ -1,4 +1,6 @@
-from flask import request, jsonify, Blueprint
+import os
+
+from flask import request, jsonify, Blueprint, send_from_directory
 from bson.objectid import ObjectId
 from bson.errors import InvalidId
 from werkzeug.exceptions import BadRequest
@@ -8,7 +10,6 @@ from app import mongo
 
 
 pavementAPI = Blueprint('pavementAPI', __name__, url_prefix='/pavement')
-
 
 @pavementAPI.route('', methods=['POST'])
 def create_data():
@@ -336,3 +337,72 @@ def delete_document(_id):
         result = {'error': 'Server Error ' + str(type(inst)) + ' ' + str(inst)}
         code = 500
     return jsonify(result), code
+
+
+@pavementAPI.route('/<_id>', methods=['POST'])
+def insert_image(_id):
+    """ Queries the database for a specified document by ID, uploads an image,
+        and updates the document if found.
+
+    Takes user's image from an HTTP POST request and adds the data 
+    to the server. Also adds a image href to the database entry at the 
+    specified id.
+
+    Args:
+        None directly, takes image data from the request
+
+    Returns:
+        A pair (JSON: response, Int: response code)
+        which tells the user if their request was correct and tells
+        the user where their data can be accessed from.
+
+        Examples:
+        ({
+         "message":"Image added",
+         "href":"/pavement/images/507f1f77bcf86cd799439013.png"
+        }, 201)
+
+    Raises:
+        none
+    """
+    # Default return values
+    result = {'error': 'Bad Request'}
+    code = 400
+    try:
+        # Make sure the request has a file
+        if 'file' in request.files:
+            file = request.files['file']
+            if file is not None:
+                # Find the file type 
+                _, extension = os.path.splitext(file.filename)
+                # Make sure the file is an image
+                if extension.lower() in ['.jpg', '.jpeg', '.png', '.gif', '.bmp']:
+                    filename = _id + extension
+                    updated = mongo.db.pavement.update_one({"_id": ObjectId(_id)},
+                                                        { '$set': { "image" : '/pavement/images/' + filename } })
+                    if updated.modified_count > 0:
+                        file.save(os.path.join('data', 'images', filename))
+                        result = {'message':'Image added',
+                                'href': '/pavement/images/' + filename}
+                        code = 200
+                    else:
+                        # If the results from the query is empty
+                        response = 'Resource {} not found'.format(_id)
+                        result = {'error': response}
+                        code = 404
+    except BadRequest:
+        pass
+    except InvalidId:
+        # Ill formed object id
+        response = 'Resource {} not found'.format(_id)
+        result = {'error': response}
+        code = 404
+    except Exception as inst:
+        # Error while handling user request
+        result = {'error': 'Server Error ' + str(type(inst)) + ' ' + str(inst)}
+        code = 500
+    return jsonify(result), code
+
+@pavementAPI.route('/images/<filename>', methods=['GET'])
+def get_image(filename):
+    return send_from_directory(os.path.join(os.path.pardir, 'data', 'images'), filename)
