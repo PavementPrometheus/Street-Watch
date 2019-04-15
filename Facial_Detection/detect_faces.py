@@ -1,3 +1,4 @@
+#!/usr/bin/env python2.7
 #*****************************************************
 # Certain sections of code are from following an online 
 # tutorial on OpenCV
@@ -26,6 +27,17 @@ ap.add_argument("-c", "--confidence", type=float, default=0.5,
 ap.add_argument("-f", "--file",
 	help="filename of file containing images to test")
 args = vars(ap.parse_args())
+
+faces_file = open("faces.txt","r")
+line = faces_file.readline()
+line = line.split(",")
+curr_frame = line[0]
+x_value = line[1]
+y_value = line[2]
+height = line[3]
+width = line[4]
+
+print "curr_frame: %s x_value: %s y_value: %s height: %s width: %s" % (curr_frame,x_value,y_value,height,width)
 
 # Load serialized model from disk
 print("[INFO] loading model...")
