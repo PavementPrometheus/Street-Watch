@@ -5,13 +5,15 @@ In order to use the evaluate the code in this repo for the alpha release, please
    - `git clone https://github.com/PavementPrometheus/Street-Watch.git ~/Street-Watch`
 2. Follow the below sections for each portion of the release
 ## Web API
-1. Download docker compose
+1. Download docker compose (desktop/toolbox)
    - Windows: https://docs.docker.com/docker-for-windows/install/
    - Mac    : https://docs.docker.com/docker-for-mac/install/
    - Linux  : https://docs.docker.com/install/linux/docker-ce/ubuntu/ 
-2. a. Run the docker container
+   
+2. a. Run the docker container (assuming from linux)
+   - `sudo dockerd &`
    - `cd ~/Street-Watch/PavementApp`
-   - `docker-compose up --build`
+   - `sudo docker-compose up --build`
 
 2. b. Run the test docker container
    - `cd ~/Street-Watch/PavementApp`
