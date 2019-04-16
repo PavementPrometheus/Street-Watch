@@ -18,8 +18,8 @@ app = create_app()
 def index():
     """ serves static index file """
     return render_template('index.html',
-                           title='Placeholder',
-                           body='Placeholder')
+                           title='Pavement Prometheus',
+                           body='Group 9 - Pavement Prometheus')
 
 def main():
     app.logger.info('running environment: %s', os.environ.get('ENV'))
