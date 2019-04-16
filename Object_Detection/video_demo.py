@@ -15,10 +15,12 @@ import argparse
 import time
 import datetime
 import os
-import urllib.request
-import json
+import requests
 
+tout = 1.5
+faceFile = 'pedloc.txt'
 streetapiurl = 'http://192.168.99.100:4000/pavement'
+cameraNum = '123'
 location = 'Intersection of 1234 fake st. and 5th fabricated blvd.'
 
 def get_test_input(input_dim, CUDA):
@@ -50,11 +52,12 @@ def prep_image(img, inp_dim):
     
 def send_request(data):
     url =  streetapiurl
-    json_data = data.encode('utf-8')
-    req = urllib.request.Request(url)
-    req.add_header('Content-Type', 'application/json; charset=utf-8')
-    req.add_header('Content-Length', len(json_data))
-    rep = urllib.request.urlopen(req, json_data)
+    try:
+        requests.post(url = url, data = data, timeout=tout)
+    except requests.Timeout:
+        pass
+    except requests.ConnectionError:
+        print("Error: Not finding database")
 
 def write(x, img, fr, curdate):
     c1 = tuple(x[1:3].int())
@@ -66,30 +69,28 @@ def write(x, img, fr, curdate):
         x2 = int(c2[0])
         y1 = int(c1[1])
         y2 = int(c2[1])
-        name = str(cls) + "_" + str(fr) + "_x1-"+ str(x1) + "_x2-"+ str(x2) + "_y1-"+ str(y1) + "_y2-"+ str(y2) + ".png"
-        crop_object = img[y1:y2, x1:x2]
-        cv2.imwrite(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'output', 'photos', name), crop_object)
-        
-        data  = {}
-        data['date'] = curdate
-        data['type'] = 'Person'
-        data['location'] = location
-        data['x1'] = x1
-        data['x2'] = x2
-        data['y1'] = y1
-        data['y2'] = y2
-        json_data = json.dumps(data)
-        send_request(json_data)
+        width = x2-x1
+        height = y2-y1
+        centerx = x2 - (width/2)
+        centery = y2 - (height/2)
+        if os.path.exists(os.path.join('output', faceFile)):
+            wr = 'a'
+        else:
+            wr = 'w'
+        file = open(os.path.join('output', faceFile), wr)
+        file.write(str(fr) + "," + str(centerx) + "," + str(centery) + "," + str(width) + "," + str(height) + "\n")
+        file.close()
     
-    label = "{0}".format(classes[cls])
-    color = random.choice(colors)
-    if((c2[0]-c1[0]) < 700):
+    else:
+        label = "{0}".format(classes[cls])
+        color = random.choice(colors)
+        if((c2[0]-c1[0]) < 700):
+            cv2.rectangle(img, c1, c2,color, -1)
+        cv2.rectangle(img, c1, c2,color, 1)
+        t_size = cv2.getTextSize(label, cv2.FONT_HERSHEY_PLAIN, 1 , 1)[0]
+        c2 = c1[0] + t_size[0] + 3, c1[1] + t_size[1] + 4
         cv2.rectangle(img, c1, c2,color, -1)
-    cv2.rectangle(img, c1, c2,color, 1)
-    t_size = cv2.getTextSize(label, cv2.FONT_HERSHEY_PLAIN, 1 , 1)[0]
-    c2 = c1[0] + t_size[0] + 3, c1[1] + t_size[1] + 4
-    cv2.rectangle(img, c1, c2,color, -1)
-    cv2.putText(img, label, (c1[0], c1[1] + t_size[1] + 4), cv2.FONT_HERSHEY_PLAIN, 1, [225,255,255], 1);
+        cv2.putText(img, label, (c1[0], c1[1] + t_size[1] + 4), cv2.FONT_HERSHEY_PLAIN, 1, [225,255,255], 1);
     return img
 
 def arg_parse():
@@ -171,7 +172,7 @@ if __name__ == '__main__':
     assert cap.isOpened(), 'Cannot capture source'
     
     try:
-        os.makedirs(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'output', 'photos'))
+        os.makedirs(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'output', 'frames'))
     except FileExistsError:
         pass
     
@@ -183,7 +184,7 @@ if __name__ == '__main__':
         ret, frame = cap.read()
         if ret:
 
-            
+            data = {}
             img, orig_im, dim = prep_image(frame, inp_dim)
             
             im_dim = torch.FloatTensor(dim).repeat(1,2)                        
@@ -196,7 +197,7 @@ if __name__ == '__main__':
             with torch.no_grad():   
                 output = model(Variable(img), CUDA)
             output = write_results(output, confidence, num_classes, nms = True, nms_conf = nms_thesh)
-
+            
             if type(output) == int:
                 frames += 1
                 # print("FPS of the video is {:5.2f}".format( frames / (time.time() - start)))
@@ -228,14 +229,30 @@ if __name__ == '__main__':
             counts = list(map(lambda y: int(y[-1]), output))
             str1 = "People: "
             str2 = "Cars: "
+            num1 = counts.count(0)
+            num2 = counts.count(2)
             cv2.rectangle(orig_im, (10,20), (200,120), (0, 0, 0), -1)
-            cv2.putText(orig_im, str1+str(counts.count(0)), (20,55), cv2.FONT_HERSHEY_PLAIN, 2, [225,255,255], 1);
-            cv2.putText(orig_im, str2+str(counts.count(2)), (20,95), cv2.FONT_HERSHEY_PLAIN, 2, [225,255,255], 1);
+            cv2.putText(orig_im, str1+str(num1), (20,55), cv2.FONT_HERSHEY_PLAIN, 2, [225,255,255], 1);
+            cv2.putText(orig_im, str2+str(num2), (20,95), cv2.FONT_HERSHEY_PLAIN, 2, [225,255,255], 1);
+            
             
             #curdate = int(round(time.time() * 1000))
             curdate = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
             
+            data = {
+                'date': curdate,
+                'frame': frame,
+                'cameraNum': cameraNum,
+                'peopleSum': num1,
+                'carSum': num2
+            }
+            
+            send_request(data)
+            
             list(map(lambda x: write(x, orig_im, frames, curdate), output))
+            
+            name = cameraNum + "_" + str(frames) + ".jpg"
+            cv2.imwrite(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'output', 'frames', name), orig_im)
             
             cv2.imshow("frame", orig_im)
             if not args.noshow:
