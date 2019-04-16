@@ -1,0 +1,29 @@
+version: '3.7'
+services:
+ web:
+  container_name: "flask"
+  build: .
+  ports:
+   - "4000:4000"
+  depends_on:
+   - mongodb
+  volumes:
+   - .:/PavementApp/app
+  environment:
+   - ENV=production # development is debug, production is normal.
+   - PORT=4000
+   - DB=mongodb://mongodb:27017/pavement
+ mongodb:
+  image: mongo:latest
+  container_name: "mongodb"
+  environment:
+   - MONGO_DATA_DIR=/usr/data/db
+   - MONGO_LOG_DIR=/dev/null
+  volumes:
+   - ./PavementApp/data/db:/usr/PavementApp/data/db
+  ports:
+   - 27017:27017
+  command: mongod --smallfiles --logpath=/dev/null --port 27017 --bind_ip_all
+networks:
+ default:
+  name: web
