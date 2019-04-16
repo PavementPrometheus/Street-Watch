@@ -32,10 +32,10 @@ In order to use the evaluate the code in this repo for the alpha release, please
 3. Follow Web API instructions above
 4. While Web API service is running, run video_demo
    - `cd ~/Street-Watch/Object_Detection`
-   - `video_demo.py --video JacksonWYTownSquare.avi`
+   - `python video_demo.py --video SeattleSeventhAndOlive.mp4`
 5. Look in output folder to play video post obfuscation
    - `cd ~/Street-Watch/Object_Detection/output`
-   - `<video player name> result_JacksonWYTownSquare.avi`
+   - `<video player name> result_SeattleSeventhAndOlive.mp4`
 6. Run HTTP GET request for stored data from Web API
    - `curl -i -H "Accept: application/json" -H "Content-Type: application/json" http://192.168.99.100:4000/pavement`
 
