@@ -25,7 +25,7 @@ In order to use the evaluate the code in this repo for the alpha release, please
 
 ## Object Detection and Database Population
 1. Download yolov3.weights from google drive
-   - https://drive.google.com/drive/u/1/folders/0ACU5WrVTgGFqUk9PVA/
+   - https://drive.google.com/a/oregonstate.edu/file/d/1TD6mVECAa86DxqGQdZblFu_iN5RsSsyA/view?usp=sharing
 2. Place yolov3.weights into Object_Detection
    - `cd ~/Downloads`
    - `mv yolov3.weights ~/Street-Watch/Object_Detection`
