@@ -1,11 +1,15 @@
 # Facial Detection
 
+Please refer to the [Facial Detection](https://github.com/PavementPrometheus/Street-Watch/wiki/Face-Detection) wiki for a full explanation of face detection program details and functionality.
+
 ### Goal 
 By detecting and obfuscating faces of pedestrians, our group can retain important data while protecting the identities of pedestrians.
 
 This program uses OpenCV features to detect and obfuscate faces, so please ensure requirements are installed before run.  
 **detect_faces.py** - Detects the faces of pedestrians and outputs the confidence  
 **blur_faces.py** - Detects the faces of pedestrians and outputs the confidence and obfuscated (blurred) faces
+
+First, make sure you have python 2.7 installed on your local machine. Then run ```pip install -r requirements.txt``` to install additional needed requirements.
 
 ### Program execution options:
 **1) Run test.sh** - this is a demo script that will take in pre-selected images and output them, running both detect_faces.py and blur_faces.py  
