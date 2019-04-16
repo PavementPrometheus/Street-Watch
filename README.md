@@ -16,6 +16,7 @@ In order to use the evaluate the code in this repo for the alpha release, please
    - `sudo docker-compose up --build`
 
 2. b. Run the test docker container
+   - `sudo dockerd &`
    - `cd ~/Street-Watch/PavementApp`
    - `docker-compose -f ~/Street-Watch/PavementApp/docker-compose.yml -f ~/Street-Watch/PavementApp/docker-compose.test.yml up --build`
 
