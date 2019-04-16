@@ -18,10 +18,10 @@ In order to use the evaluate the code in this repo for the alpha release, please
 2. b. Run the test docker container
    - `sudo dockerd &`
    - `cd ~/Street-Watch`
-   - `docker-compose -f ~/Street-Watch/docker-compose.yml -f ~/Street-Watch/docker-compose.test.yml up --build`
+   - `sudo docker-compose -f ~/Street-Watch/docker-compose.yml -f ~/Street-Watch/docker-compose.test.yml up --build`
 
 3. b. Test the API
-   - `docker exec flask python -m unittest`
+   - `sudo docker exec flask python -m unittest`
 
 ## Object Detection and Database Population
 1. Download yolov3.weights from google drive
