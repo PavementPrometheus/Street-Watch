@@ -81,10 +81,10 @@ def write(x, img, fr, curdate):
         file.write(str(fr) + "," + str(centerx) + "," + str(centery) + "," + str(width) + "," + str(height) + "\n")
         file.close()
     
-    else:
+    if(cls == 2):
         label = "{0}".format(classes[cls])
         color = random.choice(colors)
-        if((c2[0]-c1[0]) < 700):
+        if((c2[0]-c1[0]) < 850):
             cv2.rectangle(img, c1, c2,color, -1)
         cv2.rectangle(img, c1, c2,color, 1)
         t_size = cv2.getTextSize(label, cv2.FONT_HERSHEY_PLAIN, 1 , 1)[0]
