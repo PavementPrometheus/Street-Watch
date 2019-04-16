@@ -38,3 +38,10 @@ In order to use the evaluate the code in this repo for the alpha release, please
    - `<video player name> result_JacksonWYTownSquare.avi`
 6. Run HTTP GET request for stored data from Web API
    - `curl -i -H "Accept: application/json" -H "Content-Type: application/json" http://192.168.99.100:4000/pavement`
+
+## Troubleshooting
+**Cannot access localhost:4000**  
+After building the container through the ```docker-compose up --build``` command, if no url is showing to access the Web API (ex: localhost:4000):
+- If using the Docker Toolbox, open the Kinematic Docker API 
+- Find the Access URL on the righthand side (ex: 192.168.99.100:4000)
+- Use the Acess URL within your browser to access the Web API
