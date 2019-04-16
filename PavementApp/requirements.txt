@@ -1,5 +1,0 @@
-Flask
-requests
-pymongo
-flask_pymongo
-Flask-Testing
