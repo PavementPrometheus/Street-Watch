@@ -13,6 +13,7 @@
 import numpy as np
 import argparse
 import cv2
+import os
 
 # Arguments for command line
 ap = argparse.ArgumentParser()
@@ -43,6 +44,10 @@ print "curr_frame: %s x_value: %s y_value: %s height: %s width: %s" % (curr_fram
 print("[INFO] loading model...")
 net = cv2.dnn.readNetFromCaffe(args["prototxt"], args["model"])
 
+#for file in os.listdir(args["file"]):
+#    if file.endswith(".jpg"):
+
+#for i in range(0, detections.shape[2]):
 # Create blob
 image = cv2.imread(args["image"])
 (h, w) = image.shape[:2]
