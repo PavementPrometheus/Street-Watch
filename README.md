@@ -24,19 +24,24 @@ In order to use the evaluate the code in this repo for the alpha release, please
    - `docker exec flask python -m unittest`
 
 ## Object Detection and Database Population
-1. Download yolov3.weights from google drive
+1. Download Anaconda3
+2. Download Pytorch 1.0 from Anaconda prompt
+3. Download OpenCV from Anaconda prompt
+4. Download NumPy from Anaconda prompt
+5. Download and install CUDA specific to GPU
+6. Download yolov3.weights from google drive
    - https://drive.google.com/a/oregonstate.edu/file/d/1TD6mVECAa86DxqGQdZblFu_iN5RsSsyA/view?usp=sharing
-2. Place yolov3.weights into Object_Detection
+7. Place yolov3.weights into Object_Detection
    - `cd ~/Downloads`
    - `mv yolov3.weights ~/Street-Watch/Object_Detection`
-3. Follow Web API instructions above
-4. While Web API service is running, run video_demo
+8. Follow Web API instructions above
+9. While Web API service is running, run video_demo
    - `cd ~/Street-Watch/Object_Detection`
    - `python video_demo.py --video SeattleSeventhAndOlive.mp4`
-5. Look in output folder to play video post obfuscation
+10. Look in output folder to play video post obfuscation
    - `cd ~/Street-Watch/Object_Detection/output`
    - `<video player name> result_SeattleSeventhAndOlive.mp4`
-6. Run HTTP GET request for stored data from Web API
+11. Run HTTP GET request for stored data from Web API
    - `curl -i -H "Accept: application/json" -H "Content-Type: application/json" http://192.168.99.100:4000/pavement`
 
 ## Troubleshooting
