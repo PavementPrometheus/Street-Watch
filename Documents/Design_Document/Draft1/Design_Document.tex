@@ -42,7 +42,7 @@
 \begin{titlepage}
     \pagenumbering{gobble}
     \begin{singlespace}
-    	\includegraphics[height=4cm]{coe_v_spot1}
+    	\includegraphics[height=4cm]{images/coe_v_spot1}
         \hfill 
         % 4. If you have a logo, use this includegraphics command to put it on the coversheet.
         %\includegraphics[height=4cm]{CompanyLogo}   
@@ -86,22 +86,6 @@
 \clearpage
 
 % 8. now you write!
-\section{Change Log}\\
-\begin{center}
-  \begin{tabular}{ | l | p{6cm} | p{6cm} | }
-    \hline 
-    \textbf{Section} & \textbf{Original} & \textbf{New} \\ \hline 
-    \textbf{Multi-Object Tracking} & 
-    \begin{itemize}
-        \item Using Chanho's algorithm to applying tracking on objects on live-streaming videos.
-        \item Applying 
-    \end{itemize} & 
-    \begin{itemize}
-        \item We have removed this section because it is an extra element that we thought before Code Freeze but we couldn't. However, we will be adding it to our Final Release.
-        \item We haven't added this part because the code doesn't output testable information for the TAs to evaluate our work.
-    \end{itemize}\\ \hline 
-  \end{tabular}
-\end{center}
 
 \section{Overview}
 \subsection{Purpose}
@@ -119,8 +103,7 @@ The scope for this project is immediately to have a system that results in infor
     \textbf{You Only Look Once (YOLOv3)} & A state of the art object detection model which can classify objects with a high degree of fidelity in a time sensitive environment \cite{YOLOv3}. \\ \hline
     \textbf{mean Average Precision (mAP)} & The mean for a metric denoting percentage of objects precisely identified, a ubiquitous standard used by object detection models \cite{YOLOv3}. \\ \hline
     \textbf{Car Learning to Act (CARLA)} & An open simulator for urban driving. CARLA has been developed from the ground up to support training, prototyping, and validation of autonomous driving models, including both perception and control \cite{Carla}. \\ \hline 
-    \textbf{OpenCV} & OpenCV is a library of programming functions mainly aimed at real-time computer vision. \cite{OpenCV}. \\ \hline 
-    
+    \textbf{VGGFace2} & A large-scale face recognition dataset \cite{VGGFace2}. \\ \hline 
     \textbf{Facial Keypoints Detection} & Facial detection through the use of multiple key points on a person's face \cite{VGGFace2}. \\ \hline
     \textbf{Obfuscation and Mangling} & Used interchangeably. The irreparable destruction of data. Specifically used in relation to identifying features of objects. \\ \hline
   \end{tabular}
@@ -132,7 +115,7 @@ The software described in this document, Facial Detector, and Obfuscator, is a p
 
 \begin{frame}\\
 \begin{ganttchart}[
-    today=26,
+    today=7,
     today rule/.style= {blue, thick},
     x unit=0.43cm,
     y unit title=0.5cm,
@@ -155,37 +138,51 @@ The software described in this document, Facial Detector, and Obfuscator, is a p
     \gantttitle{May}{4}
     \gantttitle{June}{4} \\
     
-    \ganttbar{\textbf{Fall Term}}{2}{10} \\
+    \ganttbar{\textbf{Fall Term}}{2}{9} \\
     
     \ganttset{bar/.append style={fill=blue!10}}
+    \ganttbar{\textit{Problem Statement}}{2}{3} \\
     \ganttbar{\textit{Requirement Document}}{2}{5} \\
-    \ganttbar{\textit{Tech Design}}{3}{7} \\
-    \ganttbar{\textit{Design Document}}{5}{9} \\
-    \ganttbar{\textit{Progress Report}}{9}{10} \\
+    \ganttbar{\textit{Tech Review}}{3}{7} \\
+    \ganttbar{\textit{Design Document}}{5}{8} \\
+    \ganttbar{\textit{Progress Report}}{9}{9} \\
     
     \ganttset{bar/.append style={fill=yellow!10}}
-    \ganttbar{\textit{Live Demo and Presentation}}{2}{10} \\
+    \ganttbar{\textit{Live Demo and Presentation}}{6}{9} \\
     
     \ganttset{bar/.append style={fill=blue!40}}
     \ganttbar{\textbf{Winter Term}}{14}{22} \\
     
     \ganttset{bar/.append style={fill=red!20}}
     \ganttbar{\textit{Alpha Level Release}}{11}{18} \\
+    
+    \ganttset{bar/.append style={fill=red!5}}
+    \ganttbar{\textit{Build Real-time Object Detection Model}}{11}{14} \\
+    \ganttbar{\textit{Build Face Decetion Model}}{14}{17} \\
+    \ganttbar{\textit{Build Multi-object Tracking}}{11}{17} \\
+    
     \ganttset{bar/.append style={fill=green!20}}
     \ganttbar{\textit{Beta Level Release}}{19}{22} \\
+    
+    \ganttset{bar/.append style={fill=green!5}}
+    \ganttbar{\textit{Models Development}}{19}{21} \\
+    \ganttbar{\textit{Data Analysis}}{19}{21} \\
     
     \ganttset{bar/.append style={fill=blue!40}}
     \ganttbar{\textbf{Spring Term}}{24}{34} \\
     
     \ganttset{bar/.append style={fill=blue!20}}
     \ganttbar{\textit{1.0 Level Release}}{23}{31} \\
+    \ganttset{bar/.append style={fill=blue!5}}
+    \ganttbar{\textit{Adding Web Features}}{23}{31} \\
     \ganttset{bar/.append style={fill=blue!10}}
     \ganttbar{\textit{Final Report}}{32}{34}
     
     % pointers
-    \ganttlink{elem7}{elem8}
-    \ganttlink{elem8}{elem10}
-    \ganttlink{elem10}{elem11}
+    \ganttlink{elem8}{elem12}
+    \ganttlink{elem9}{elem10}
+    \ganttlink{elem11}{elem14}
+    \ganttlink{elem12}{elem16}
 \end{ganttchart}
 \end{frame}
 
@@ -215,26 +212,35 @@ The real-time object detection system will be the first layer of processing perf
 % To-do: Stephanie
 \subsection{Viewpoint: Face Detection}
 \subsubsection{Viewpoint Description}
-Our group will conduct facial detection using a feature-based method by using a pre-trained convolutional neural network. For the feature-based method, the facial features are detected through examining the edge, intensity, color, shape, etc. of a feature. Using a pre-trained facial detection model allows our group to use a model that has been trained on a large dataset. It is important that we use images from different perspectives so that we can make sure faces are detected in varied situations.
+Our group will conduct facial detection using a feature-based method by training a convolutional neural network (CNN) and validating our results. For the feature-based method, the facial features are detected through examining the edge, intensity, color, shape, etc. of a feature. Training of a facial detection model allows our group to use the video footage from the city of Portland and define the faces we are looking for. The data we use is from low-quality footage where the environment can take different forms, so it is important that we can train the data in those various settings. The validation of facial detection is responsible for ensuring that the results from our program are true to the information that is actually within the video footage. The final criteria the facial detection program is to achieve at least 70 percent accuracy of detecting faces. 
 \subsubsection{Design Concerns}
-Main concerns of the design are making sure that the faces are detected from different perspectives and angles. The pre-trained CNN will allow us to detect pedestrian faces with a model that is based on a large dataset with a variation of faces. The City of Portland footage will be taken from different perspectives, the so the model must be able to detect multiple sides of the face from several different camera angles. Another design concern is ensuring high confidence of results within various times of day and weather conditions. Footage may be taken from outside environments where daylight, crowds, or other outside factors may alter the visibility of the scene. This stresses the importance of testing the program with different images to ensure confidence in the detection.
+Main concerns of the design are the the quality of video to work with and ensuring consistent detection accuracy. The video footage provided by the city of Portland is low quality and is taken from various perspectives. Low quality footage may not allow us to make out distinct facial features, so we will need to make sure we train our model with different quality face images. With the video taken from different perspectives, the CNN must also be trained with multiple sides of the face from several different camera angles. Another design concern is ensuring high accuracy of results within various times of day and weather conditions. The video footage is taken from outside environments where rain, fog, snow, and other elements may alter the visibility of the scene. This stresses the importance of training the program with many different environments and consistently testing the accuracy of the detection to understand what may need to be adjusted. To avoid these design concerns, our group must have in-depth CNN training and validation.
 \subsubsection{Design Elements}
-Design elements of facial detection includes determining a facial detection method, determining a pre-trained model to use, detect and obfuscate faces within images, and testing the program with a variety of pedestrian situations. When determining a facial detection method, it is important to weigh the pros and cons of each method. For our particular case, a feature-based detection method will allow us the best flexibility for our needs. Feature-based detection used the key facial features of a face to identify a face, rather than the face as a whole. Using the feature-based method is more likely to detect facial features despite the orientation of the face. If a person is faced to the side or in a different direction, the program is not fazed as it is not looking at the overall face but the distinctive features. This makes the speed of the program quicker as it would not need to run extra functions to detect faces from different angles, just the primary program. Using a pre-trained facial detection model with OpenCV features, we are able to detect faces and display the confidence of their detection. The main focus of pedestrian detection is on preserving the privacy of pedestrians through obfuscation. In our face detection program we will use a blurring tool that will obfuscate the faces of pedestrians within the scene. The hope is that through obfuscation, City of Portland workers can continue to use the traffic footage and data without needing to worry about specific privacy violations. \\
-Once the face detection and obfuscation program is developed, it will be tested with images of people from different angles and perspectives so that we can ensure the detection works in different real-world situations. The detection program should be able to detect different types of people from different depths of perspective doing different tasks. Whether someone is looking in a different direction or is farther away from the camera, their faces should be able to be detected. The output of the program should be of the original image with the faces of pedestrians detected and obfuscated.
+Design elements of creating a facial detection program includes training a CNN and validation of results. To implement feature-based facial detection, first the key facial features that will be tracked must be determined. Our group will take snapshots of the traffic video footage and use those frames to train with initially. The image is examined to find common variances in the face, grouping the components together to ensure they match. By having a threshold of the number of key points of features detected, we can then label that area as a detected face. Using the feature-based method is more likely to detect facial features despite the orientation of the face. If a person is faced to the side or in a different direction, the program is not fazed as it is not looking at the overall face but the distinctive features. This makes the speed of the program quicker as it would not need to run extra functions to detect faces from different angles, just the primary program. The results of the program should output a JSON file containing the detected facial feature data.
 
+Once the CNN is trained to detect faces, the results are validated by testing the accuracy between our program versus that of industry-leading facial detection software, Face by Microsoft. Face uses the distinctive features of a face to mark a section of an image to be a person.The software examines 27 different elements of a face including the face edges, hair, eyes, eyebrows, mouth, nose, chin,and more. Each facial feature is measured with an x and y value delivered in a JSON file. This technology has a 70 percent accuracy, focusing on the facial features, making it a very accurate implementation. With the same accuracy goals and output type as our program, it makes it perfect to test against. 
 \subsubsection{Relationship}
 Facial detection plays in integral part in our project as the faces must be detected to protect the privacy of the pedestrians. A pedestrian’s face is a unique, identifying aspect of a person, so if it is not obscured, the person could be easily tracked. If just the pedestrians were detected and the entire bodies were obscured as a block, larger amounts of video footage would be lost. By just detecting the faces, the crucial identifying information is obscured without altering too much of the footage. The point of the project is to keep the privacy of the pedestrians while retrieving of traffic data. For people to keep their privacy and live free lives, faces must be detected to be obscured.
 
+
+% To-do: Maze
+\subsection{Viewpoint: Multi-object Tracking}
+\subsubsection{Viewpoint Description}
+Multi-object tracking tasks to localize multiple objects, maintaining their identities, and predict their individual movements given an input video. Mazen Alotaibi will be the main designer of the subsystem relating to building the multi-object tracking system supervised by Dr. Fuxin Li and Chanho Kim because of their research experience in developing multi-object tracking computer vision systems. The main purpose of this system is to collect and pre-process data to describes the behavior of pedestrians, bikers, and cars in traffic. The collected data should include the bounding boxes of all relevant objects as well as unique identifiers for each object in the image. The expected outputs of the computer vision system are heat maps of objects, pose estimate, and movement tracking to be used in the data analysis stage.
+\subsubsection{Design Concerns}
+Our main concerns in the multi-object tracking system are related to generating data-sets for training the computer vision system, building the computer vision system, and validating the result of the computer vision system over rain, snow, and other weather conditions as well as changes of lighting conditions. Generating data-sets is challenging because of two reasons: legality of using videos without the consent of captured pedestrians and labeling the captured objects within video frames.Because of the complexity of recording unconsenting individuals, it is crucial that preserving privacy is our highest priority. Our system should seek to not only localize people within the image, but also to censor their faces in order to preserve their anonymity. Because we might participate in a Multiple Object Tracking competition to test our computer vision system, we expect our computer vision system to have high accuracy and speed when tracking multiple objects within any video format. Lastly, because our computer vision system will be used on surveillance cameras that monitor inner cities and highways, our computer vision system's accuracy of detection and tracking stay be high over rain, snow, and other weather conditions as well as changes of lighting conditions. 
+\subsubsection{Design Elements}
+Due to the requirement of having the computer vision system ready for production after develop, our optimal solution for the development framework is PyTorch. The preview version PyTorch 1.0 was chosen as our framework for our computer vision system due to its speed and simplicity. Pytorch 1.0 utilizes the machine learning framework Caffe2 for its backend operations. PyTorch and Caffe2 are collaboratively developed and managed by Facebook and Microsoft and is built with scalability and simplicity in mind. In addition, PyTorch allows us to import our computer vision system into production C++ code without the need to rewrite or change any of the PyTorch code that has been written in Python. Moreover, the expected output of the computer vision system should be in JavaScript Object Notation (JSON) format because that what the City of Portland expect when obtaining the data for production use. For the development of the computer vision system structure, our computer vision system will use YOLOv3 for object tracking and Dr. Li's computer vision system \cite{limodel}, which uses LSTM cells to obtain the spatial information of detected object over time.
+\subsubsection{Relationship}
+Multi-object tracking is the most complex part in our project because obtaining more useful information that describes pedestrians, bikers, and cars in traffic is needed for the data analysis stage. In addition, developing the a decent multi-object tracking system for our project requires a lot of development and understanding of building computer vision models.
 % To-do: Ian
 \subsection{Viewpoint: Data Analysis and Access}
 \subsubsection{Viewpoint Description}
 Data analysis and access is a key subsystem in fulfilling the end goal presented to our group by the City of Portland. Ian McQuoid and Mazen Alotaibi will be the two designers of the subsystems relating to data aggregation, analysis, and access.  The main purpose of this system is to provide the City with reasonable access to the data provided by sensors around the city, after stripping all personally identifying information, and to make the data provided more intelligible by parsing the video or photographic information gathered into a serialized format. This formatted data will allow the City to make decisions about the roadways and traffic with greater speed and accuracy. The criteria our group will use to interpret and evaluate the system will be concerned with the ergonomics relating to the access of the information and the accuracy to ground truth models for the analysis and representation of the serialized data. 
 \subsubsection{Design Concerns}
 Our main concerns in the Data subsystems are related to the persistent data structure, the data access scheme, and the data content. The City of Portland largely uses the JavaScript Object Notation (JSON) as  a key standard for transmission of data objects between departments. Because of the City's JSON use, the City of Portland requires analyzed data to be in JSON form with a web-based interface. The first concern raised is the requirement relating to the basic data format, while the second concern relates to the structure the analyzed data will be stored in. The data content is the broadest concern in the design process. The content of the analyzed data must be verifiable, accurate, and interesting. The basis for the content concern relates directly to the applications for the analyzed data. Information relating to traffic makeup, size, lane usage, and speed are all directly applicable to traffic analysis, so final data content in the database must provide comparable or directly related information.
-
 \subsubsection{Design Elements}
-The direct data access format must be in JSON form as defined by the City's concern. The format specification affords the team the opportunity to use the MongoDB persistent data structure for storing final data-sets. The MongoDB database program has default interfaces in place which will be the base for access to stripped and analyzed data. The resulting system will be presented as a web-based interface backed by the MongoDB program for storing and accessing data. The interface will be implemented using a RESTful API written in Python which will create a simple HTML web page for accessing and downloading JSON-formatted data from a MongoDB database. The presented solution will directly address both of the primary concerns presented by the City of Portland. The final design concern is related to the final content of our stored data. The primary pictorial and video data will be presented directly to the user and will not be stored in the database; however, analyzed and stripped information needs to be stored in the database. Before data can be stored in the database, pertinent information needs to be taken from the photographic or video data collected by the City's sensors. The data system will use a mixture of direct storage of information and inferential stripping techniques to gather the required information. Primarily, the object detection and tracking systems will provide concrete data on number, makeup, and trajectory of the vehicles and pedestrians. The concrete data will be stored directly in the MongoDB structure. Further, the data analysis subsystem will be comprised of categorization algorithms. Incoming data-sets will be split into geographic and time-stamped categories. The final results will be stored in the database structure for access. 
-
+The direct data access format must be in JSON form as defined by the City's concern. The format specification affords the team the opportunity to use the MongoDB persistent data structure for storing final data-sets. The MongoDB database program has default interfaces in place which will be the base for access to stripped and analyzed data. The resulting system will be presented as a web-based interface backed by the MongoDB program for storing and accessing data. The interface will be implemented using a general back-end written in Node JS which will create a simple HTML web page for accessing and downloading JSON-formatted data from a MongoDB database. The presented solution will directly address both of the primary concerns presented by the City of Portland. The final design concern is related to the final content of our stored data. The primary pictorial and video data will be presented directly to the user and will not be stored in the database; however, analyzed and stripped information needs to be stored in the database. Before data can be stored in the database, pertinent information needs to be taken from the photographic or video data collected by the City's sensors. The data system will use a mixture of direct storage of information and inferential stripping techniques to gather the required information. Primarily, the object detection and tracking systems will provide concrete data on number, makeup, and trajectory of the vehicles and pedestrians. The concrete data will be stored directly in the MongoDB structure. Further, the data analysis subsystem will be comprised of categorization, comparative, statistical, traffic theory based, and neural network algorithms. Incoming data-sets will first be split into geographic and time-stamped categories and will be passed into the predictive algorithmic structures for analysis. The outputs from the system will be comprised of predictions on congestion, traffic incidents, and recommendations for traffic flow organization. The final results will be stored in the database structure for access. 
 \subsubsection{Relationship}
 The data analysis and access system will directly interface with the three detection and tracking systems. All three of these systems will present the data system with uniform information in the form of both photographic or video data as well as serialized information about the geographic and temporal placement of the data-sets. When possible, serialized information such as the number of detected objects will be passed to the data system and parsed, categorized, and stored by the access subsystem. All non-serialized data will be passed directly to the analysis subsystem, as the photographic and video data will not be accessible through the MongoDB interface. The two subsystems of access and analysis will interface with each other in a symbiotic relation with the analysis system pulling data from the access system as well as pushing analyzed and serialized data into the database. 
 \subsection{Conclusion}
