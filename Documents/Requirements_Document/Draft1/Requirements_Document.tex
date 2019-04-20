@@ -42,7 +42,7 @@
 \begin{titlepage}
     \pagenumbering{gobble}
     \begin{singlespace}
-    	\includegraphics[height=4cm]{coe_v_spot1}
+    	\includegraphics[height=4cm]{images/coe_v_spot1}
         \hfill 
         % 4. If you have a logo, use this includegraphics command to put it on the coversheet.
         %\includegraphics[height=4cm]{CompanyLogo}   
@@ -86,40 +86,6 @@
 \clearpage
 
 % 8. now you write!
-\section{Change log}
-%[section] [original] [new]
-\begin{center}
-  \begin{tabular}{ | p{2cm} | p{8cm} | p{6cm} | }
-    \hline 
-    \textbf{Section} & \textbf{Original} & \textbf{New} \\ \hline 
-    \textbf{Surveys} & 
-    \begin{itemize}
-        \item Detailed our plan to conduct surveys with people to determine citizens' perspective on privacy concerns of pedestrian footage.
-        \item Section discussed our plan to gather survey participants, develop survey with objective questions, and conduct surveys throughout different stages of our project.
-    \end{itemize} & 
-    \begin{itemize}
-        \item Survey section was fully removed and is no longer a part of our project.
-        \item Decision to remove the social survey section came after a goal reset and re-focus of the scope of our project with our client.
-    \end{itemize}\\ \hline 
-    \textbf{Generating Datasets using CARLA} & 
-        \begin{itemize}
-        \item Generating datasets using CARLA, a simulation tool, to process unbiased dataset for training our models.
-        \item Section discussed our plan to using CARLA to generate a dataset, controlling the simulation environment, and applying data augmentation to remove any biases within datasets.
-    \end{itemize} & 
-    \begin{itemize}
-        \item We have stopped using CARLA due to the lack of useful functionality to control and process unbiased datasets. In addition, it is a time consuming to develop models of a simulation environment.
-        \item We gained access to a well-established dataset developed by New York University and NVIDIA that answers our needs of an unbiased dataset for training and testing.
-    \end{itemize} \\ \hline
-    \textbf{API} & 
-        \begin{itemize}
-        \item  Added a section detailing the requirements of our web-API
-    \end{itemize} & 
-    \begin{itemize}
-        \item Although the API was a key point from the beginning of our project, it was not detailed in the original requirements document. This was an oversight and is now remedied. 
-    \end{itemize} \\ \hline
-  \end{tabular}
-\end{center}
-
 \section{Introduction}
 The software described in this document, Facial Detector and Obfuscator, is a project under the advisement of Chanho Kim (Georgia Tech) and Dr. Fuxin Li (Oregon State University). The client for this project is the City of Portland, which wants a proof of concept for a way to transform the data from their traffic cameras so the city may store the data without storing identifying information about the citizens in the footage. The software will be based largely on \textit{YOLOv3} \cite{YOLOv3}.
 \subsection{System Purpose}
@@ -155,14 +121,14 @@ The scope for this project is immediately to have a system that results in infor
 
 \fi
 \subsection{Description}
-Our team will use a well-established dataset created by New York University and NVIDIA to train and test our detection models. This entails downloading and applying pre-processing to clean the data of unwanted noises and data augmentation to generalize our model to increase accuracy. Although we will be using pre-trained models for Real-time Object Detection and Face Detection, applying training on more specific dataset that is related to our problem will increase of our model when preforming the task.
+Our team will generate a dataset for the pedestrian detection algorithm using Car Learning in Act (CARLA) \cite{Carla}. This entails gathering datasets for face detection algorithm from VGGFace2 \cite{VGGFace2} and applying data pre-processing to clean the data of unwanted noises.
 
 \subsection{User Stories}
 \textbf{Generate Pedestrians Dataset} \\
-As a developer, I want to use a pre-trained YOLOv3 on MS COCO, then train on NYU dataset.
+As a developer, I want to generate a dataset, using CARLA, of pedestrians so I can train the pedestrian detection algorithm.
 \\
 \textbf{Gather Faces Dataset} \\
-As a developer, I want to use a pre-trained CNN on OpenFace, then train on NYU dataset.
+As a developer, I want to collect a dataset from VGGFace2 to train the face detection algorithm.
 \\
 \textbf{Data Pre-processing} \\
 As a developer, I want the data to be clean to suppress unwanted distortions or enhance some image features important to further processing.
@@ -196,54 +162,53 @@ As a city official, I want the resulting data to be useful for open machine lear
 
 \section{Face Detection and Obfuscation}
 \subsection{Description}
-Our team will use a pre-trained convolutional neural network (CNN) with Facial Keypoints Detection to find pedestrian faces using the a Feature-based method. By using a feature-based method, faces can be detected from various environments and angles. Our team will finally apply an obfuscation technique to remove identifying information of the face from the data.
+Our team will train a convolutional neural network (CNN) with Facial Keypoints Detection to find pedestrian faces using the \textit{VGGFace2} dataset. By having a threshold of the number of key points detected, we will then label that area as a detected face. Our team will finally apply an obfuscation technique to remove identifying information of the face from the data.
 
 \subsection{User Stories}
-\textbf{Determine facial detection method} \\
-As a developer, I want to determine facial detection method that will work well to detect faces in different types of environments or perspectives.
+\textbf{Determine Facial Keypoints} \\
+As a developer, I want to determine facial keypoints that will be used so that I can have a set group of points to focus on within the \textit{VGGFace2} data.
 \\
-\textbf{Determine a pre-tained Neural Network} 
+\textbf{Create a Simple Neural Network} 
 \\
-As a developer, I want determine a pre-trained neural network that will allow us to easily detect faces with a model that has been trained with a large dataset.
+As a developer, I want to create a simple neural network so that I have a base model to build my program off of.
 \\
-\textbf{Take in images and produce detected face}
+\textbf{Form Convolutional Neural Network}
 \\
-As a developer, I want develop a program that will take in input images and output a detected face, indicated with a box.
+As a developer, I want to form a convolutional neural network so that I can better analyze the dataset.
 \\
-\textbf{Take in images and produce obfuscated face}
+\textbf{Train Convolutional Neural Network}
 \\
-As a developer, I want to develop a program that will take in images and output an obfuscated face so people are not easily identified.
+As a developer, I want to train my \textit{CNN}s so that I can use the facial keypoints to train the program to detect other faces than the ones tested with.
 \\
-\textbf{Test with different images}
+\textbf{Data Removal}
 \\
-As a developer, I would like to test the detection program with different types of images with different depths and perspectives of pedestrians.
-\\
-\textbf{Data removal} \\
 As a city official, I want the tool to destroy personally identifiable information from the data in an irreparable manner. 
-\section{Web API}
+
+\section{Survey}
 \subsection{Description}
-Our team will provide the City of Portland with an API which will allow the City to access, add, patch, delete, aggregate, sort, and compare data from the cameras. This will include accessing and adding frames of footage to the open-source data-set that the detection and obfuscation layer will output. 
-
+Our team will perform data collection through polling and surveys to ascertain public opinion on privacy. This is specifically in relation to the facial obfuscation/mangling our system will implement. We will judge the correctness of our system using our analysis of this data as a key marker.  
 \subsection{User Stories}
-
+\textbf{Query the General Public} 
 \\
-\textbf{Ease of Use} \\
-As a developer with the City of Portland, I want the API to be easy to understand and provide reasonable feedback. An example of such an API is a RESTful one.
+As a city official, I want a baseline of data that any inferences can be checked against. This data should come from a breadth of people.
 \\
-\textbf{Uniform Data}\\
-As a developer with the City of Portland, I want all the data in the database to be uniform and accessible in a JSON format.
+\textbf{Options of Obfuscation} 
 \\
-\textbf{Data Manipulation} \\
-As a developer with the City of Portland, I want to be able to access, remove, create, and delete data in the database. 
+As a developer, I want the queries to relate to ways of obfuscating personally identifiable data so I can concretely know what method to use. 
 \\
-\textbf{Open-source Data-set}\\
-As an official with the City of Portland, I want to be able to download the entire database and have immediate access to all the frames of obfuscated footage.
+\textbf{Simple But Comprehensive Results} 
+\\
+As a city official, I want questions that are not open ended to draw quick conclusions from. Questions should be varied, but relevant. 
+\\
+\textbf{Unbiased Tests} 
+\\
+As a participant, I want polls and surveys that don't misrepresent my feelings or push me to answer in a way inconsistent with my views on the issue.
 
 \section{Timeline}
 
 \begin{frame}\\
 \begin{ganttchart}[
-    today=26,
+    today=4,
     today rule/.style= {blue, thick},
     x unit=0.43cm,
     y unit title=0.5cm,
@@ -294,6 +259,9 @@ As an official with the City of Portland, I want to be able to download the enti
     \ganttbar{\textit{Final Report}}{32}{34}
     
     % pointers
+    \ganttlink{elem1}{elem2}
+    \ganttlink{elem2}{elem3}
+    \ganttlink{elem3}{elem4}
     \ganttlink{elem7}{elem8}
     \ganttlink{elem8}{elem10}
     \ganttlink{elem10}{elem11}
