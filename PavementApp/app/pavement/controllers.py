@@ -145,12 +145,12 @@ def delete_data():
     try:
         query = request.get_json()
         documents = mongo.db.pavement.find(query, {"_id": 1})
-        count = documents.count_documents()
+        count = documents.count()
         if count > 0:
             # Delete all associated images and documents
             for doc in documents:
-                delete_pattern(os.path.join('data', 'images'), str(doc) + '*')
-                mongo.db.pavement.delete({"_id": ObjectId(doc)})
+                delete_pattern(os.path.join('data', 'images'), str(doc['_id']) + '*')
+                mongo.db.pavement.delete_one({"_id": doc['_id']})
             response = 'Deleted {} result(s)'.format(count)
             result = {'message': response}
             code = 200
