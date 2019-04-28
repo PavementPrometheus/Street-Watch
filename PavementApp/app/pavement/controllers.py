@@ -7,6 +7,7 @@ from werkzeug.exceptions import BadRequest
 from pymongo.errors import BulkWriteError
 
 from app import mongo
+from utils.file_utils import delete_pattern
 
 
 pavementAPI = Blueprint('pavementAPI', __name__, url_prefix='/pavement')
@@ -143,9 +144,13 @@ def delete_data():
     code = 400
     try:
         query = request.get_json()
-        deleted = mongo.db.pavement.delete_many(query)
-        count = deleted.deleted_count
+        documents = mongo.db.pavement.find(query, {"_id": 1})
+        count = documents.count_documents()
         if count > 0:
+            # Delete all associated images and documents
+            for doc in documents:
+                delete_pattern(os.path.join('data', 'images'), str(doc) + '*')
+                mongo.db.pavement.delete({"_id": ObjectId(doc)})
             response = 'Deleted {} result(s)'.format(count)
             result = {'message': response}
             code = 200
@@ -303,6 +308,9 @@ def delete_document(_id):
     try:
         deleted = mongo.db.pavement.delete_one({"_id": ObjectId(_id)})
         if deleted.deleted_count > 0:
+            # Now remove any images for the id if they exist
+            delete_pattern(os.path.join('data', 'images'), _id + '*')
+
             response = 'Deleted _id: {}'.format(_id)
             result = {'message': response}
             code = 200
@@ -365,7 +373,7 @@ def insert_image(_id):
                 if extension.lower() in ['.jpg', '.jpeg', '.png', '.gif', '.bmp']:
                     filename = _id + extension
                     updated = mongo.db.pavement.update_one({"_id": ObjectId(_id)},
-                                                        { '$set': { "image" : '/pavement/images/' + filename } })
+                        { '$set': { "image" : '/pavement/images/' + filename } })
                     if updated.modified_count > 0:
                         file.save(os.path.join('data', 'images', filename))
                         result = {'message':'Image added',
