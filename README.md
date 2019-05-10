@@ -18,7 +18,7 @@ In order to use the evaluate the code in this repo for the alpha release, please
 2. b. Run the test docker container
    - `sudo dockerd &`
    - `cd ~/Street-Watch/PavementApp`
-   - `sudo docker-compose -f ~/Street-Watch/PavementApp/docker-compose.yml -f ~/Street-Watch/PavementApp/docker-compose.test.yml up --build`
+   - `sudo docker-compose -f ~/Street-Watch/PavementApp/docker-compose.test.yml up --build`
 
 3. b. Test the API
    - `sudo docker exec flask python -m unittest`
@@ -37,11 +37,11 @@ In order to use the evaluate the code in this repo for the alpha release, please
    - `cd ~/Street-Watch/Object_Detection/output`
    - `<video player name> result_SeattleSeventhAndOlive.mp4`
 6. Run HTTP GET request for stored data from Web API
-   - `curl -i -H "Accept: application/json" -H "Content-Type: application/json" http://192.168.99.100:4000/pavement`
+   - `curl -i -H "Accept: application/json" -H "Content-Type: application/json" http://192.168.99.100:5000/pavement`
 
 ## Troubleshooting
-**Cannot access localhost:4000**  
-After building the container through the ```docker-compose up --build``` command, if no url is showing to access the Web API (ex: localhost:4000):
+**Cannot access localhost:5000**  
+After building the container through the ```docker-compose up --build``` command, if no url is showing to access the Web API (ex: localhost:5000):
 - If using the Docker Toolbox, open the Kinematic Docker API 
-- Find the Access URL on the righthand side (ex: 192.168.99.100:4000)
+- Find the Access URL on the righthand side (ex: 192.168.99.100:5000)
 - Use the Acess URL within your browser to access the Web API
