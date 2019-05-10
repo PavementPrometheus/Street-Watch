@@ -25,7 +25,8 @@ def main():
     app.logger.info('running environment: %s', os.environ.get('ENV'))
     # Debug mode if development env
     debugVal = os.environ.get('ENV') == 'development'
-    app.run(host='0.0.0.0', port=int(PORT), debug=debugVal)  # Run the app
+    currentHost = os.environ.get('FLASK_RUN_HOST')
+    app.run(host=currentHost, port=int(PORT), debug=debugVal)  # Run the app
 
 if __name__ == '__main__':
    main()
