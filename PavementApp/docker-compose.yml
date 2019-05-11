@@ -4,14 +4,14 @@ services:
   container_name: "flask"
   build: .
   ports:
-   - "4000:4000"
+   - "5000:5000"
   depends_on:
    - mongodb
   volumes:
    - .:/app
   environment:
-   - ENV=production # development is debug, production is normal.
-   - PORT=4000
+   - FLASK_ENV=production # development is debug, production is normal.
+   - PORT=5000
    - DB=mongodb://mongodb:27017/pavement
  mongodb:
   image: mongo:latest
