@@ -322,6 +322,7 @@ if __name__ ==  '__main__':
 
     torch.cuda.empty_cache()
 
+#Face detection and obfuscation
 def face_detection(image):
     # Generate command line arguments
     ap = argparse.ArgumentParser()
