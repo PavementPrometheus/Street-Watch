@@ -16,6 +16,8 @@ import time
 import datetime
 import os
 import requests
+import imutils
+from imutils.video import VideoStream
 
 tout = 1.5
 faceFile = 'pedloc.txt'
@@ -23,6 +25,65 @@ streetapiurl = 'http://192.168.99.100:4000/pavement'
 cameraNum = '123'
 location = 'Intersection of 1234 fake st. and 5th fabricated blvd.'
 
+print("[INFO] loading model...")
+net = cv2.dnn.readNetFromCaffe("deploy.prototxt", "res10_300x300_ssd_iter_140000.caffemodel")
+
+#Face detection
+def face_detect(image, num_faces_detected):
+    #cv2.imwrite("original_img.jpg",image)    
+    (h, w) = image.shape[:2]
+    blob = cv2.dnn.blobFromImage(cv2.resize(image, (300, 300)), 1.0,
+       (300, 300), (104.0, 177.0, 123.0))
+#    print("[INFO] computing object detections...")
+    net.setInput(blob)
+    detections = net.forward()
+    #If face not detected, obscure pedestrian
+#    if len(detections) == 0:
+#        startY = y_value - 0.5*height
+#        startX = x_value = 0.5*width
+#        endY = startY + height
+#        endX = startX + width
+#        image = cv2.rectangle(image, (startX, startY), (endX, endY),
+#            (0, 0, 255), 2)
+#        person = image[startY:endY, startX:endX]
+        # Blur the pedestrian image
+#        person = cv2.GaussianBlur(person, (73, 73), 30)
+        # Put the pedestrian region back into the frame image
+#        image[startY:endY, startX:endX] = person
+
+#        print("Face not detected")
+        #cv2.imshow("Output", image)
+        #cv2.waitKey(0)
+
+    # Go through every detected face within the image
+    #print("detections: ",len(detections))
+    for i in range(0, detections.shape[2]):
+        confidence = detections[0, 0, i, 2]
+        if confidence > 0.3:
+            box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
+            (startX, startY, endX, endY) = box.astype("int")
+            
+            # Put the rectangle around the person's face
+            text = "{:.2f}%".format(confidence * 100)
+            y = startY - 10 if startY - 10 > 10 else startY + 10
+            image = cv2.rectangle(image, (startX, startY), (endX, endY),
+                (0, 0, 255), 2)
+            cv2.putText(image, text, (startX, y),
+            cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 0, 255), 2)
+            face = image[startY:endY, startX:endX]
+            
+            #Blur the face image
+            face = cv2.GaussianBlur(face, (73, 73), 30)
+            num_faces_detected += 1
+            # Put the blurred face region back into the frame image
+            image[startY:endY, startX:endX] = face
+    #cv2.imshow("Output", image)
+#    filestream.close()
+    #cv2.imwrite("output_img.jpg",image)    
+    return image
+
+
+#Pedestrian detection
 def get_test_input(input_dim, CUDA):
     img = cv2.imread("dog-cycle-car.png")
     img = cv2.resize(img, (input_dim, input_dim)) 
@@ -82,15 +143,15 @@ def write(x, img, fr, curdate):
         file.close()
     
     if(cls == 2):
-        label = "{0}".format(classes[cls])
-        color = random.choice(colors)
-        if((c2[0]-c1[0]) < 850):
-            cv2.rectangle(img, c1, c2,color, -1)
-        cv2.rectangle(img, c1, c2,color, 1)
-        t_size = cv2.getTextSize(label, cv2.FONT_HERSHEY_PLAIN, 1 , 1)[0]
-        c2 = c1[0] + t_size[0] + 3, c1[1] + t_size[1] + 4
-        cv2.rectangle(img, c1, c2,color, -1)
-        cv2.putText(img, label, (c1[0], c1[1] + t_size[1] + 4), cv2.FONT_HERSHEY_PLAIN, 1, [225,255,255], 1);
+        #label = "{0}".format(classes[cls])
+        #color = random.choice(colors)
+        #if((c2[0]-c1[0]) < 850):
+        #    cv2.rectangle(img, c1, c2,color, -1)
+        #cv2.rectangle(img, c1, c2,color, 1)
+        #t_size = cv2.getTextSize(label, cv2.FONT_HERSHEY_PLAIN, 1 , 1)[0]
+        #c2 = c1[0] + t_size[0] + 3, c1[1] + t_size[1] + 4
+        #cv2.rectangle(img, c1, c2,color, -1)
+        #cv2.putText(img, label, (c1[0], c1[1] + t_size[1] + 4), cv2.FONT_HERSHEY_PLAIN, 1, [225,255,255], 1)
     return img
 
 def arg_parse():
@@ -158,8 +219,13 @@ if __name__ == '__main__':
     model.eval()
     
     videofile = args.video
-    
+    #Video from file
     cap = cv2.VideoCapture(videofile)
+    #Video stream from webcam
+    #cap = VideoStream(src=0).start()
+    #time.sleep(2.0)
+    #cap = VideoStream(src=0).start()
+
     FRAME_WIDTH = cap.get(3)
     FRAME_HEIGHT = cap.get(4)
     FRAME_FPS = cap.get(5)
@@ -180,13 +246,16 @@ if __name__ == '__main__':
     start = time.time()
     start_time = time.time()    
     while cap.isOpened():
-        
+
+        #face_detect_video(videofile)
+
         ret, frame = cap.read()
         if ret:
 
             data = {}
+            #frame = face_detect(frame)
             img, orig_im, dim = prep_image(frame, inp_dim)
-            
+
             im_dim = torch.FloatTensor(dim).repeat(1,2)                        
             
             
@@ -197,6 +266,8 @@ if __name__ == '__main__':
             with torch.no_grad():   
                 output = model(Variable(img), CUDA)
             output = write_results(output, confidence, num_classes, nms = True, nms_conf = nms_thesh)
+            #orig_im = face_detect(orig_im)
+            #print("you made it out of face detection")
             
             if type(output) == int:
                 frames += 1
@@ -235,6 +306,10 @@ if __name__ == '__main__':
             cv2.putText(orig_im, str1+str(num1), (20,55), cv2.FONT_HERSHEY_PLAIN, 2, [225,255,255], 1);
             cv2.putText(orig_im, str2+str(num2), (20,95), cv2.FONT_HERSHEY_PLAIN, 2, [225,255,255], 1);
             
+            num_faces_detected = 0
+            orig_im = face_detect(orig_im, num_faces_detected)
+            print("num_faces_detected",num_faces_detected)
+#            print("YOU ARE HERE")
             
             #curdate = int(round(time.time() * 1000))
             curdate = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
@@ -247,7 +322,7 @@ if __name__ == '__main__':
                 'carSum': num2
             }
             
-            send_request(data)
+            #send_request(data)
             
             list(map(lambda x: write(x, orig_im, frames, curdate), output))
             
@@ -259,8 +334,6 @@ if __name__ == '__main__':
                     cv2.imshow("frame", orig_im)
             if args.output is not None:
                     out.write(orig_im)
-            # cv2.imshow("frame", orig_im)
-            # out.write(orig_im)
             key = cv2.waitKey(1)
             if key & 0xFF == ord('q'):
                 break

@@ -294,7 +294,7 @@ if __name__ ==  '__main__':
         c2 = c1[0] + t_size[0] + 3, c1[1] + t_size[1] + 4
         cv2.rectangle(img, c1, c2,color, -1)
         cv2.putText(img, label, (c1[0], c1[1] + t_size[1] + 4), cv2.FONT_HERSHEY_PLAIN, 1, [225,255,255], 1)
-        input_img = img
+        output_img = face_detection(img) #Detect and obfuscate faces in image
         return img
 
 
@@ -322,6 +322,8 @@ if __name__ ==  '__main__':
 
     torch.cuda.empty_cache()
 
+#Face detection and obfuscation
+def face_detection(image):
     # Generate command line arguments
     ap = argparse.ArgumentParser()
     ap.add_argument("-i", "--image", required=True,
@@ -350,7 +352,6 @@ if __name__ ==  '__main__':
             #print "frame_num: %d x_value: %d y_value: %d height: %d width: %d" % (frame_num,x_value,y_value,height,width)
 
     	# Create blob image to be used
-    	image = input_img
     	(h, w) = image.shape[:2]
     	#(h, w) = image.shape[:2]
     	blob = cv2.dnn.blobFromImage(cv2.resize(image, (300, 300)), 1.0,
@@ -377,27 +378,28 @@ if __name__ ==  '__main__':
     		cv2.waitKey(0)
 
     	# Go through every detected face within the image
-    	for i in range(0, detections.shape[2]):
-    		confidence = detections[0, 0, i, 2]
-    		if confidence > args["confidence"]:
-    			# Generate the box around the people's faces
-    			box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
-                            (startX, startY, endX, endY) = box.astype("int")
-    			# Put the rectangle around the person's face
-    			text = "{:.2f}%".format(confidence * 100)
-    			y = startY - 10 if startY - 10 > 10 else startY + 10
-    			image = cv2.rectangle(image, (startX, startY), (endX, endY),
-    				(0, 0, 255), 2)
-    			cv2.putText(image, text, (startX, y),
-    			cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 0, 255), 2)
-    			face = image[startY:endY, startX:endX]
-    			# Blur the face image
-    			face = cv2.GaussianBlur(face, (73, 73), 30)
-    			# Put the blurred face region back into the frame image
-    			image[startY:endY, startX:endX] = face
-
+    for i in range(0, detections.shape[2]):
+    	confidence = detections[0, 0, i, 2]
+    	if confidence > args["confidence"]:
+    		# Generate the box around the people's faces
+    		box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
+                (startX, startY, endX, endY) = box.astype("int")
+    		# Put the rectangle around the person's face
+    		text = "{:.2f}%".format(confidence * 100)
+    		y = startY - 10 if startY - 10 > 10 else startY + 10
+    		image = cv2.rectangle(image, (startX, startY), (endX, endY),
+    			(0, 0, 255), 2)
+    		cv2.putText(image, text, (startX, y),
+    		cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 0, 255), 2)
+    		face = image[startY:endY, startX:endX]
+    		# Blur the face image
+    		face = cv2.GaussianBlur(face, (73, 73), 30)
+    		# Put the blurred face region back into the frame image
+    		image[startY:endY, startX:endX] = face
             # Output the resulting obscurred image to the user
-    	#cv2.imshow("Output", image)
-        cv2.imwrite('output.jpg',img)
-    	cv2.waitKey(0)
-    	filestream.close()
+   	#cv2.imshow("Output", image)
+    cv2.imwrite('output.jpg',img)
+    cv2.waitKey(0)
+    filestream.close()
+    return img
+
