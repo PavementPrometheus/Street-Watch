@@ -16,8 +16,6 @@ import time
 import datetime
 import os
 import requests
-import imutils
-from imutils.video import VideoStream
 
 tout = 1.5
 faceFile = 'pedloc.txt'
@@ -82,7 +80,6 @@ def face_detect(image, num_faces_detected):
     #cv2.imwrite("output_img.jpg",image)    
     return image
 
-
 #Pedestrian detection
 def get_test_input(input_dim, CUDA):
     img = cv2.imread("dog-cycle-car.png")
@@ -120,7 +117,7 @@ def send_request(data):
     except requests.ConnectionError:
         print("Error: Not finding database")
 
-def write(x, img, fr, curdate):
+def write(x, img, fr, output):
     c1 = tuple(x[1:3].int())
     c2 = tuple(x[3:5].int())
     cls = int(x[-1])
@@ -139,10 +136,12 @@ def write(x, img, fr, curdate):
         else:
             wr = 'w'
         file = open(os.path.join('output', faceFile), wr)
-        file.write(str(fr) + "," + str(centerx) + "," + str(centery) + "," + str(width) + "," + str(height) + "\n")
+        file.write(str(fr) + "," + str(cls) + "," + str(x1) + "," + str(y1) + "," + str(width) + "," + str(height) + "," + str(-1) + "," + str(-1) + "," + str(-1) + "," + str(-1) + "\n")
         file.close()
+        color = random.choice(colors)
+        cv2.rectangle(img, c1, c2,color, 1)
     
-    if(cls == 2):
+    #if(cls == 2):
         #label = "{0}".format(classes[cls])
         #color = random.choice(colors)
         #if((c2[0]-c1[0]) < 850):
@@ -309,9 +308,7 @@ if __name__ == '__main__':
             num_faces_detected = 0
             orig_im = face_detect(orig_im, num_faces_detected)
             print("num_faces_detected",num_faces_detected)
-#            print("YOU ARE HERE")
-            
-            #curdate = int(round(time.time() * 1000))
+
             curdate = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
             
             data = {
@@ -324,7 +321,7 @@ if __name__ == '__main__':
             
             #send_request(data)
             
-            list(map(lambda x: write(x, orig_im, frames, curdate), output))
+            list(map(lambda x: write(x, orig_im, frames, output), output))
             
             name = cameraNum + "_" + str(frames) + ".jpg"
             cv2.imwrite(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'output', 'frames', name), orig_im)
