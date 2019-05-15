@@ -129,6 +129,7 @@ def write(x, img, fr, output):
         y2 = int(c2[1])
         width = x2-x1
         height = y2-y1
+        censor = height*0.3
         centerx = x2 - (width/2)
         centery = y2 - (height/2)
         if os.path.exists(os.path.join('output', faceFile)):
@@ -138,19 +139,19 @@ def write(x, img, fr, output):
         file = open(os.path.join('output', faceFile), wr)
         file.write(str(fr) + "," + str(cls) + "," + str(x1) + "," + str(y1) + "," + str(width) + "," + str(height) + "," + str(-1) + "," + str(-1) + "," + str(-1) + "," + str(-1) + "\n")
         file.close()
-        color = random.choice(colors)
-        cv2.rectangle(img, c1, c2,color, 1)
+        cv2.rectangle(img, c1, c2, ( 0, 255, 255), 1)
+        if((height > width*1.5) and (x1 > 10) and (width < 150)):
+            cv2.rectangle(img, (x1,y1) , (x2, y1 + int(censor)), ( 0, 0, 0), -1)
     
-    #if(cls == 2):
-        #label = "{0}".format(classes[cls])
-        #color = random.choice(colors)
+    if(cls == 2):
+        label = "{0}".format(classes[cls])
         #if((c2[0]-c1[0]) < 850):
         #    cv2.rectangle(img, c1, c2,color, -1)
-        #cv2.rectangle(img, c1, c2,color, 1)
-        #t_size = cv2.getTextSize(label, cv2.FONT_HERSHEY_PLAIN, 1 , 1)[0]
-        #c2 = c1[0] + t_size[0] + 3, c1[1] + t_size[1] + 4
-        #cv2.rectangle(img, c1, c2,color, -1)
-        #cv2.putText(img, label, (c1[0], c1[1] + t_size[1] + 4), cv2.FONT_HERSHEY_PLAIN, 1, [225,255,255], 1)
+        cv2.rectangle(img, c1, c2, ( 255, 0, 0), 1)
+        t_size = cv2.getTextSize(label, cv2.FONT_HERSHEY_PLAIN, 1 , 1)[0]
+        c2 = c1[0] + t_size[0] + 3, c1[1] + t_size[1] + 4
+        cv2.rectangle(img, c1, c2, ( 255, 0, 0) , -1)
+        cv2.putText(img, label, (c1[0], c1[1] + t_size[1] + 4), cv2.FONT_HERSHEY_PLAIN, 1, [225,255,255], 1)
     return img
 
 def arg_parse():
